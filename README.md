@@ -8,8 +8,9 @@
 1. Install prerequisites:
    - Python 3.11+
    - Node 18+
-   - uv
-   - just
+   - uv https://docs.astral.sh/uv/
+   - pnpm https://pnpm.io/
+   - just https://just.systems/man/en/
 
 2. Initial setup:
    just setup

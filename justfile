@@ -9,39 +9,39 @@ default:
 
 setup:
     @echo "🔧 Setting up backend..."
-    cd api && uv sync
+    cd backend && uv sync
     @echo "🔧 Setting up frontend..."
-    cd frontend && npm install
+    cd frontend && pnpm install
     @echo "✅ Setup complete"
 
 # ---- DEV ----
 
 dev:
     @echo "🚀 Starting backend and frontend..."
-    just api & just frontend && wait
+    just backend & just frontend && wait
 
 backend:
     cd backend && uv run uvicorn api.main:app --reload
 
 frontend:
-    cd frontend && npm run dev
+    cd frontend && pnpm run dev
 
 # ---- TESTING ----
 
 test:
     @echo "🧪 Running tests..."
-    cd api && uv run pytest
-    cd frontend && npm test
+    cd backend && uv run pytest
+    cd frontend && pnpm test
 
 # ---- LINTING ----
 
 lint:
-    cd api && uv run ruff check .
-    cd frontend && npm run lint
+    cd backend && uv run ruff check .
+    cd frontend && pnpm run lint
 
 format:
-    cd api && uv run ruff format .
-    cd frontend && npm run format
+    cd backend && uv run ruff format .
+    cd frontend && pnpm run format
 
 # ---- CLEANUP ----
 
