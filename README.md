@@ -4,6 +4,7 @@
 - Jarrod Van Doren TL
 - Kaleb Garner TL
 - James Nguyen TM
+- Danny Rivas
 
 ### Local development
 
