@@ -3,7 +3,9 @@
 ## Add your name here
 - Jarrod Van Doren TL
 - Kaleb Garner TL
-- Danny Rivas
+
+
+- Danny Rivas TM
 
 ### Local development
 
