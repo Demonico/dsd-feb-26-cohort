@@ -2,6 +2,7 @@
 
 ## Add your name here
 - Jarrod Van Doren TL
+- Danny Rivas
 
 ### Local development
 
