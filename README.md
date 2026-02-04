@@ -3,6 +3,7 @@
 ## Add your name here
 - Jarrod Van Doren TL
 - Kaleb Garner TL
+- Dipen Bhandari
 
 ### Local development
 
