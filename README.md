@@ -8,12 +8,13 @@
 1. Install prerequisites:
    - Python 3.11+
    - Node 18+
-   - uv https://docs.astral.sh/uv/
-   - pnpm https://pnpm.io/
-   - just https://just.systems/man/en/
+   - uv - https://docs.astral.sh/uv/
+   - pnpm - https://pnpm.io/
+   - vite - https://vite.dev/guide/
+   - just - https://just.systems/man/en/
 
 2. Initial setup:
-   just setup
+   `just setup`
 
 3. Start the app:
-   just dev
+   `just dev`
