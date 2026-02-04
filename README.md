@@ -1,8 +1,10 @@
 # dsd-feb-26-cohort
 
 ## Add your name here
+
 - Jarrod Van Doren TL
 - Kaleb Garner TL
+- Pratyush Kumar
 
 ### Local development
 
