@@ -5,7 +5,8 @@
 - Kaleb Garner TL
 
 
-- Danny Rivas TM
+
+- Danny Rivas
 
 ### Local development
 
