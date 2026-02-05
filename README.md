@@ -3,6 +3,7 @@
 ## Add your name here
 - Jarrod Van Doren TL
 - Kaleb Garner TL
+- Mandy Cheung
 
 ### Local development
 
