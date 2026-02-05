@@ -237,4 +237,8 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,webstorm+all,pycharm+all,visualstudiocode
