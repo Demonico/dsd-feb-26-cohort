@@ -9,6 +9,7 @@
 
 - James Nguyen TM
 - Danny Rivas TM
+- Mandy Cheung TM
 
 ### Local development
 
