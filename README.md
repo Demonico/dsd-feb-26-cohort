@@ -5,8 +5,8 @@
 - Jarrod Van Doren TL
 - Kaleb Garner TL
 - Dipen Bhandari TM
-- Doron Reid
-- Pratyush Kumar
+- Doron Reid TM
+- Pratyush Kumar TM
 - James Nguyen TM
 - Danny Rivas TM
 - Mandy Cheung TM
