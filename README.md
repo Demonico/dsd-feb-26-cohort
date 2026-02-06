@@ -5,6 +5,7 @@
 - Jarrod Van Doren TL
 - Kaleb Garner TL
 - Pratyush Kumar
+- James Nguyen TM
 
 ### Local development
 
