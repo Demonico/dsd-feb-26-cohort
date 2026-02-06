@@ -4,6 +4,7 @@
 
 - Jarrod Van Doren TL
 - Kaleb Garner TL
+- Doron Reid
 - Pratyush Kumar
 
 - James Nguyen TM
