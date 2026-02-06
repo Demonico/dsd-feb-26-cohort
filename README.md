@@ -1,9 +1,15 @@
 # dsd-feb-26-cohort
 
 ## Add your name here
+
 - Jarrod Van Doren TL
 - Kaleb Garner TL
-- Dipen Bhandari
+- Dipen Bhandari TM
+- Doron Reid
+- Pratyush Kumar
+- James Nguyen TM
+- Danny Rivas TM
+- Mandy Cheung TM
 
 ### Local development
 
