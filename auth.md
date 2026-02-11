@@ -1,0 +1,5 @@
+- [Parent ticket](https://linear.app/teamjk/issue/TEA-5/research-auth-providers-and-approach)
+  - Method of authentication (decided via a poll): **Magic links sent via SMS/Email**
+  - [Different auth providers keeping FastAPI + Supabase + React & Vite techstack](https://linear.app/teamjk/issue/TEA-27/authentication-integration-with-fastapi-and-supabase)
+  - [Authentication entry based on user groups](https://linear.app/teamjk/issue/TEA-29/authentication-entry-points-based-on-user-groups)
+  - [Detailed plan for authentication (blueprint)](https://linear.app/teamjk/issue/TEA-30/detailed-approach-for-authentication)
