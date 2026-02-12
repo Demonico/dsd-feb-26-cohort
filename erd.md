@@ -16,6 +16,7 @@ erDiagram
     datetime next_pickup
     datetime last_pickup
     photos last_visit_photo
+    string status        "PENDING_REQUEST|COMPLETED|SKIPPED_BY_USER|FAILED_BIN_MISSING"
   }
 
   ROUTES_REGION {
@@ -32,7 +33,7 @@ erDiagram
     string type          "SKIP|EXTRA"
     datetime requested_date
     datetime created_at
-    string status        "PENDING|COMPLETED|SKIPPED_BY_USER|FAILED_BIN_MISSING"
+    string status        "PENDING|COMPLETED"
   }
 
   DRIVERS {
