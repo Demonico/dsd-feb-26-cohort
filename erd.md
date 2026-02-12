@@ -5,19 +5,22 @@ erDiagram
     string customer_name
     string subscription_tier
     string address
+    string service_instructions
+    UUID region_id FK
   }
 
   LOCATIONS {
     UUID location_id PK
     UUID customer_id FK
-    string coordinates
-    string service_instructions
+    UUID region_id FK
+    timestamp assigned_pickup
+    timestamp pickup_time
+    string photos
   }
 
-  ROUTES {
-    UUID id PK
+  ROUTES_REGION {
+    UUID region_id PK
     UUID driver_id FK
-    string vehicle_id FK
     boolean is_active
   }
 
@@ -37,7 +40,9 @@ erDiagram
     string driver_name
   }
 
-  VEHICLES {
-    string vehicle_id PK
-    string plate_number
-  }
+  %% Relationships (cardinality)
+  CUSTOMERS ||--|| LOCATIONS : "has"
+  CUSTOMERS ||--o{ REQUESTS  : "makes"
+  LOCATIONS ||--o{ REQUESTS  : "requested_at"
+  DRIVERS   ||--o{ ROUTES_REGION : "drives"
+  ROUTES_REGION ||--o{ REQUESTS : "assigned"
