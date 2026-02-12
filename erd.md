@@ -3,7 +3,7 @@ erDiagram
   CUSTOMERS {
     UUID customer_id PK
     string customer_name
-    string subscription_tier
+    string normal_pickup_time
     string address
     string service_instructions
     UUID region_id FK
@@ -13,15 +13,15 @@ erDiagram
     UUID location_id PK
     UUID customer_id FK
     UUID region_id FK
-    timestamp assigned_pickup
-    timestamp pickup_time
-    string photos
+    datetime next_pickup
+    datetime last_pickup
+    photos last_visit_photo
   }
 
   ROUTES_REGION {
     UUID region_id PK
     UUID driver_id FK
-    boolean is_active
+    boolean is_active_today
   }
 
   REQUESTS {
