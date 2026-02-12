@@ -45,4 +45,5 @@ erDiagram
   CUSTOMERS ||--o{ REQUESTS  : "makes"
   LOCATIONS ||--o{ REQUESTS  : "requested_at"
   DRIVERS   ||--o{ ROUTES_REGION : "drives"
+  ROUTES_REGION ||--o{ LOCATIONS : "assigned"
   ROUTES_REGION ||--o{ REQUESTS : "assigned"
