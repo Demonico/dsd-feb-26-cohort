@@ -3,8 +3,6 @@
 ## Purpose of This Spike
 The goal of this spike was to determine **how to handle role-based page routing and page composition** in a React application **without over-engineering the MVP**, while still allowing the system to scale.
 
-This spike focuses on **decision-making and clarity**, not production implementation.
-
 ---
 
 ## Problem Being Solved
@@ -32,6 +30,53 @@ Key question:
 - Support for nested routes and layouts
 - Ease of role-based routing
 - MVP-level complexity
+
+---
+
+## Routing Library Options
+
+### 1. React Router (Recommended)
+**Status:** Industry standard  
+**Pros:**
+- Mature, stable, well-documented
+- First-class support for nested routes
+- Easy role-based route guards
+- Large ecosystem and community support
+
+**Cons:**
+- Slight boilerplate compared to file-based routing
+
+**Best for:** MVP → Production scaling
+
+---
+
+### 2. TanStack Router
+**Pros:**
+- Strong TypeScript support
+- Built-in route validation
+- Explicit and structured routing
+
+**Cons:**
+- Smaller community
+- Higher learning curve
+- Overkill for MVP
+
+**Best for:** Large TypeScript-heavy apps
+
+---
+
+### 3. File-Based Routing (Framework-specific)
+Examples: Next.js, Remix
+
+**Pros:**
+- Minimal configuration
+- Fast prototyping
+
+**Cons:**
+- Requires framework migration
+- Less explicit control for complex role logic
+
+**Best for:** Framework-native projects
 
 ---
 
