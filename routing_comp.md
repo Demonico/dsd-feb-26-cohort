@@ -6,20 +6,16 @@ The goal of this spike was to determine **how to handle role-based page routing 
 ---
 
 ## Problem Being Solved
-The application needs to:
 - Restrict access to pages based on user role
 - Render different UI experiences depending on role
 - Support an MVP with minimal complexity
 - Avoid architectural decisions that block future growth
 
-Key question:
-> How do we control *where* users can go and *what they see* once they’re there?
-
 ---
 
 ## What Was Researched
 
-### 1. React Routing Libraries
+### React Routing Libraries
 - React Router
 - TanStack Router
 - File-based routing (framework-specific)
@@ -95,14 +91,33 @@ React Router provides the lowest-risk, lowest-complexity solution for the MVP.
 
 ---
 
+## Authentication & Role Source (Supabase)
+
+**Supabase will be used for authentication**, including:
+- User sign-up and login
+- Session management
+- Issuing JWT access tokens
+
+**Role handling approach:**
+- User authenticates via Supabase
+- Supabase JWT is sent with frontend requests
+- FastAPI validates the JWT
+- User role is resolved server-side (e.g. from Supabase metadata or database)
+- Role is returned to the frontend for routing and composition
+
+> Supabase handles **identity**.  
+> FastAPI remains the **source of truth for authorization**.
+
+---
+
 ## Role-Based Page Routing
 
 **What it means:**
 - Controls *which routes* a user can access based on role
 
 **How it works conceptually:**
-- User authenticates
-- Role is provided by backend
+- User authenticates via Supabase
+- Role is resolved by backend
 - Routes are protected on the frontend for UX
 - Backend (FastAPI) enforces authorization as the source of truth
 
@@ -123,7 +138,6 @@ This is separate from routing.
 1. **Role-Specific Layouts**
 - CustomerLayout
 - DriverLayout
-- (Future) AdminLayout
 
 Each layout defines navigation, tools, and page structure.
 
@@ -134,7 +148,6 @@ Each layout defines navigation, tools, and page structure.
 Example:
 - Customer sees pickup request form
 - Driver sees route manifest
-- Admin sees analytics panel
 
 3. **Shared Pages, Different Content**
 - Same route (e.g. `/dashboard`)
@@ -178,12 +191,11 @@ Driver acts as Admin for MVP.
 
 For the MVP:
 - ✅ Use **React Router**
+- ✅ Use **Supabase for authentication**
 - ✅ Start with **2 roles** (Customer + Driver)
 - ✅ Use **role-based route guards**
 - ✅ Use **layout-based and component-based composition**
 - ✅ Enforce authorization in **FastAPI**
-
-Design the system so **Admin can be split out later without refactoring core routing logic**.
 
 ---
 
@@ -192,9 +204,9 @@ Design the system so **Admin can be split out later without refactoring core rou
 - Role-based routing and role-based page composition are related but **distinct problems**
 - Routing controls **access**
 - Composition controls **UI structure**
+- Authentication (Supabase) and authorization (FastAPI) must be separated
 - MVP complexity increases significantly when adding roles early
 - A layout-based approach solves both problems cleanly
-- Backend must always remain the source of truth for authorization
 
 ---
 
@@ -204,5 +216,3 @@ This spike provides:
 - A clear UI composition strategy
 - A justified MVP role model
 - A scalable path forward without over-engineering
-
-The result is clarity, not code.
