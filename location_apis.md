@@ -2,7 +2,7 @@
 Google Map Platform - Core APIs 
 
 Places API 
-* Customer address input & discovery
+- Customer address input & discovery
 
 What it does
 	•	Address autocomplete
@@ -14,7 +14,7 @@ Where you use it
 	•	Prevents invalid or incomplete addresses
 
 Geocoding API 
-* Address ⇄ latitude/longitude
+- Address ⇄ latitude/longitude
 
 What it does
 	•	Convert address → (lat, lng)
@@ -26,7 +26,7 @@ Where you use it
 	•	Route planning
 
 Directions API
-* Route + ETA between points
+- Route + ETA between points
 
 What it does
 	•	Turn-by-turn routes
@@ -38,7 +38,7 @@ Where you use it
 	•	ETA shown to customers
 
 Routes API 
-* More advanced routing
+- More advanced routing
 What it improves
 	•	Faster
 	•	More accurate ETAs
@@ -46,7 +46,7 @@ What it improves
 	•	Supports EV routing
 
 Distance Matrix API
-* Travel time between many points
+- Travel time between many points
 What it does
 	•	Compute travel time between:
 	•	Driver ↔ pickups
@@ -57,7 +57,7 @@ Where you use it
 	•	Decide best driver for extra pickup
 
 Map JavaScript API
-* Map UI in browser
+- Map UI in browser
 What it does
 	•	Interactive maps
 	•	Markers
@@ -69,7 +69,7 @@ Where you use it
 	•	Customer tracking view
 
 Roads API
-* Snap GPS to real roads
+- Snap GPS to real roads
 What it does
 	•	Correct noisy GPS data
 	•	Match coordinates to actual roads
@@ -79,13 +79,42 @@ Where you use it
 	•	Playback routes
 
 Street View API
-* Visual confirmation
+- Visual confirmation
 What it does
 	•	Street-level imagery
 
 Optional use
 	•	Verify pickup locations
 	•	Reduce failed pickups
+
+Safest, Most Complete Option
+- Google Maps Platform
+	Why it’s dominant:
+
+	Best global address database
+
+	Excellent autocomplete accuracy
+
+	Strong traffic data
+
+	Most reliable ETA predictions
+
+	Huge documentation ecosystem
+
+- Best for
+
+	Ride-share
+
+	Delivery apps
+
+	Marketplace apps
+
+	Production apps where failure is expensive
+
+- Tradeoff
+
+	Can get expensive at scale.
+
 
 Mapbox 
 
@@ -99,6 +128,11 @@ APIs
 	•	Geocoding API
 	•	Directions API
 	•	Optimization API (for route planning)
+
+Best for:
+	•	Startups
+	•	Custom UI-heavy apps
+	•	Cost-conscious scaling
 
 🔗 https://www.mapbox.com
 
@@ -114,6 +148,11 @@ APIs
 	•	Geocoding & Search
 	•	Routing
 	•	Fleet Telematics
+
+Best for:
+	•	B2B fleet systems
+	•	Commercial logistics
+	•	Route-heavy applications
 
 🔗 https://developer.here.com
 
@@ -139,6 +178,20 @@ OpenRouteService (All-in-one)
 
 🔗 https://openrouteservice.org
 
+Pros:
+	•	Free
+	•	Full control
+	•	No vendor lock-in
+
+Cons:
+	•	You manage infrastructure
+	•	Accuracy varies
+	•	Scaling is your responsibility
+
+Best for:
+	•	Hobby projects
+	•	Internal tools
+	•	Budget-constrained systems
 
 Tomtom map 
 
@@ -157,5 +210,111 @@ Key features
 	•	Address validation
 	•	Distance calculations
 
+Best for:
+	•	Geofencing
+	•	Location-based triggers
+	•	Background tracking
+
+Not ideal as a full mapping replacement.
+
 🔗 https://radar.com
+
+
+
+Cost + Flexibility + Good Routing
+-> Mapbox
+	Strengths:
+
+		Great customization
+
+		Strong routing
+
+		Better styling control
+
+		Usually cheaper than Google
+
+		Excellent multi-stop optimization API
+
+	Best for:
+
+		Startups
+
+		Custom UI-heavy apps
+
+		Cost-conscious scaling
+
+Building Fleet / Logistics Heavy Systems
+-> HERE Technologies
+	Strengths:
+
+		Very strong fleet routing
+
+		Good traffic modeling
+
+		Enterprise logistics support
+
+	Best for:
+
+		B2B fleet systems
+
+		Commercial logistics
+
+		Route-heavy applications
+
+Free / Self-Hosted
+-> OpenStreetMap
+
+	With:
+
+		Nominatim
+
+		OSRM
+
+		OpenRouteService
+
+	Pros:
+
+		Free
+
+		Full control
+
+		No vendor lock-in
+
+	Cons:
+
+		You manage infrastructure
+
+		Accuracy varies
+
+		Scaling is your responsibility
+
+	Best for:
+
+		Hobby projects
+
+		Internal tools
+
+		Budget-constrained systems
+
+Underrated Option
+-> TomTom
+
+Very solid routing + traffic.
+Less popular in dev community, but technically strong.
+
+Specialized
+-> Radar
+
+	Best for:
+
+		Geofencing
+
+		Location-based triggers
+
+		Background tracking
+
+	Not ideal as a full mapping replacement.
+
+
+
 
