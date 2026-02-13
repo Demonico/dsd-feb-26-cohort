@@ -42,9 +42,9 @@ The goal of this spike was to determine **how to handle role-based page routing 
 **Cons:**
 - Slight boilerplate compared to file-based routing
 
-- Link: https://reactrouter.com/home
-
 **Best for:** MVP → Production scaling
+
+- Link: https://reactrouter.com/home
 
 ---
 
@@ -59,9 +59,9 @@ The goal of this spike was to determine **how to handle role-based page routing 
 - Higher learning curve
 - Overkill for MVP
 
-- Link: https://tanstack.com/router/latest/docs/framework/react/overview
-
 **Best for:** Large TypeScript-heavy apps
+
+- Link: https://tanstack.com/router/latest/docs/framework/react/overview
 
 ---
 
@@ -76,9 +76,9 @@ Examples: Next.js, Remix
 - Requires framework migration
 - Less explicit control for complex role logic
 
-- Link: https://arnab-k.medium.com/understanding-the-file-based-routing-in-next-js-785cbd38613b
-
 **Best for:** Framework-native projects
+
+- Link: https://arnab-k.medium.com/understanding-the-file-based-routing-in-next-js-785cbd38613b
 
 ---
 
