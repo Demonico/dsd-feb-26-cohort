@@ -10,11 +10,9 @@ function App(){
        <Routes>
         <Route path="/" element={<Home/>}/>
         <Route path="/dashboard" element={<Dashboard/>}/>
-        <Route path="customer-page" element={<CustomerPage/>}/>
+        <Route path="/customer-page" element={<CustomerPage/>}/>
         <Route path="*" element = {<NotFound/>}/>
        </Routes>
-    
-    
     </BrowserRouter>
  
    
