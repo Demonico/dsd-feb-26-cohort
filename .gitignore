@@ -240,4 +240,7 @@ $RECYCLE.BIN/
 # Python cache and bytecode
 __pycache__/
 
+# Environment file storing keys
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/macos,windows,linux,webstorm+all,pycharm+all,visualstudiocode
