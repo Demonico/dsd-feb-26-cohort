@@ -1,43 +1,56 @@
 ```mermaid
 erDiagram
-  CUSTOMERS {
-    UUID customer_id PK
-    string customer_name
-    string subscription_tier
-    string address
-  }
+    CUSTOMERS {
+        UUID customer_id PK
+        string customer_name
+        string billing_address
+        string phone
+    }
 
-  LOCATIONS {
-    UUID location_id PK
-    UUID customer_id FK
-    string coordinates
-    string service_instructions
-  }
+    SERVICE_LOCATIONS {
+        UUID location_id PK
+        UUID customer_id FK
+        string street_address
+        geography lat_long
+    }
 
-  ROUTES {
-    UUID id PK
-    UUID driver_id FK
-    string vehicle_id FK
-    boolean is_active
-  }
+    DRIVERS {
+        UUID driver_id PK
+        string driver_name
+    }
 
-  REQUESTS {
-    UUID request_id PK
-    UUID customer_id FK
-    UUID location_id FK
-    UUID route_id FK
-    string type          "SKIP|EXTRA"
-    datetime requested_date
-    datetime created_at
-    string status        "PENDING|COMPLETED|SKIPPED_BY_USER|FAILED_BIN_MISSING"
-  }
+    %% Dynamic / Daily Data
+    ROUTES {
+        UUID route_id PK
+        UUID driver_id FK
+        date service_date
+        string status
+    }
 
-  DRIVERS {
-    UUID driver_id PK
-    string driver_name
-  }
+    SERVICE_JOBS {
+        UUID job_id PK
+        UUID location_id FK
+        UUID route_id FK
+        string job_source "SCHEDULED|EXTRA_REQUEST"
+        datetime completed_at
+        string status "PENDING|COMPLETED|FAILED|SKIPPED"
+        string failure_reason
+        photos proof_of_service_photo
+    }
 
-  VEHICLES {
-    string vehicle_id PK
-    string plate_number
-  }
+    REQUESTS {
+        UUID request_id PK
+        UUID location_id FK
+        string request_type "SKIP|EXTRA"
+        datetime requested_for_date
+        datetime created_at
+        string status "PROCESSED|PENDING"
+    }
+
+    %% Relationships
+    CUSTOMERS ||--o{ SERVICE_LOCATIONS : "owns"
+    DRIVERS ||--o{ ROUTES : "assigned_to"
+    ROUTES ||--o{ SERVICE_JOBS : "executes"
+    SERVICE_LOCATIONS ||--o{ SERVICE_JOBS : "has_history"
+    SERVICE_LOCATIONS ||--o{ REQUESTS : "generates"
+```
