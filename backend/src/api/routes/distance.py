@@ -7,7 +7,9 @@ route = APIRouter(
     tags=["distance"]
 )
 
-route.post("/addresses")
-async def get_distance_between_addresses():
+class AddressInputModel(BaseModel):
+    destination: str
     
-    return result 
+@route.post("/addresses")
+async def get_distance_between_addresses(origin: str, destination: AddressInputModel):
+    return calculate_distance(origin, destination.destination)

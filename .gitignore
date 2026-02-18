@@ -138,6 +138,7 @@ fabric.properties
 !.idea/runConfigurations
 
 ### VisualStudioCode ###
+.vscode/settings.json
 .vscode/*
 !.vscode/settings.json
 !.vscode/tasks.json
