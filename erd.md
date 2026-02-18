@@ -35,6 +35,7 @@ erDiagram
         UUID location_id FK
         UUID route_id FK
         UUID request_id FK
+        int sequence_order
         string job_source "SCHEDULED|EXTRA_REQUEST"
         datetime completed_at
         string status "PENDING|COMPLETED|FAILED|SKIPPED"
