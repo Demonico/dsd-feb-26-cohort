@@ -13,7 +13,8 @@ erDiagram
         UUID customer_id FK
         UUID job_id FK
         string street_address
-        geography lat_long
+        float lat
+        float long
     }
 
     DRIVERS {
@@ -26,7 +27,9 @@ erDiagram
         UUID route_id PK
         UUID driver_id FK
         date service_date
-        string start_location
+        string start_location_name
+        float start_lat
+        float start_long
         string status
     }
 

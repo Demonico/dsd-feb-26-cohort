@@ -23,15 +23,17 @@ class Customer(SQLModel, table=True):
     customer_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
     customer_name: str
     address: str
-    phone : str # do we need this?
+    phone : str
 
 class Location(SQLModel, table=True):
     __tablename__ = "locations"
 
     location_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
     customer_id: UUID = Field(foreign_key="customers.customer_id", index=True)
+    route_id: UUID = Field(foreign_key="routes.route_id", index=True)
     street_address : str
-    lat_log : str # geography # Do we need this?
+    lat : float
+    long : float
 
 class Driver(SQLModel, table=True):
     __tablename__ = "drivers"
@@ -42,9 +44,12 @@ class Driver(SQLModel, table=True):
 class Routes(SQLModel, table=True):
     __tablename__ = "routes"
 
-    region_id: UUID = Field(primary_key=True, index=True)
+    route_id: UUID = Field(primary_key=True, index=True)
     driver_id: UUID = Field(foreign_key="drivers.driver_id", index=True)
     service_date : datetime
+    start_location_name : str
+    start_lat : float
+    start_long : float
     status : str #What is this for?
 
 class Request(SQLModel, table=True):
@@ -87,4 +92,4 @@ class ServiceJob(SQLModel, table=True):
     completed_at: Optional[datetime] = Field(default=None, index=True)
     status: JobStatus = Field(default=JobStatus.PENDING, index=True)
     failure_reason: Optional[str] = Field(default=None, nullable=True)
-    proof_of_service_photo: Optional[str] = Field(default=None, nullable=True) ## how we place the photos
+    proof_of_service_photo: Optional[str] = Field(default=None, nullable=True)
