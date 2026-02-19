@@ -2,11 +2,15 @@ README.md
 pyproject.toml
 src/api/__init__.py
 src/api/main.py
+src/api/supabase_client.py
+src/api/table.py
 src/api.egg-info/PKG-INFO
 src/api.egg-info/SOURCES.txt
 src/api.egg-info/dependency_links.txt
 src/api.egg-info/requires.txt
 src/api.egg-info/top_level.txt
-src/api/core/__init__.py
-src/api/db/__init__.py
+src/api/auth/__init.py__.py
+src/api/auth/router.py
 src/api/routes/__init__.py
+src/api/routes/drivers.py
+src/api/routes/health.py
