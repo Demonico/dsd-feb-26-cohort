@@ -1,7 +1,23 @@
+import Sidebar from "../components/Sidebar";
+
+import {House,Truck,Map,Users} from "lucide-react";
+
+
+const items  = [
+  {label:"Dashboard",icon:House},
+  {label:"Driver Manifest",icon:Truck},
+  {label:"Map",icon:Map},
+  {label:"Customers",icon:Users},
+]
+
+
 const Home = () => {
+
   return (
-    <div>Home</div>
+    <div>
+      <Sidebar items={items}/>
+    </div>
   )
 }
 
-export default Home
+export default Home;
