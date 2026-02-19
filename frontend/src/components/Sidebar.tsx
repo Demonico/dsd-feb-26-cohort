@@ -6,6 +6,16 @@ import { Settings } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
 import {Link} from "react-router-dom";
 
+import {House,Truck,Map,Users} from "lucide-react";
+
+export const items  = [
+  {label:"Dashboard",icon:House,path:"/dashboard"},
+  {label:"Driver Manifest",icon:Truck,path:"/driver-manifest"},
+  {label:"Map",icon:Map,path:"/map"},
+  {label:"Customers",icon:Users,path:"/customers"},
+]
+
+
 type SidebarProps = {
   items: SidebarItem[];
 };
