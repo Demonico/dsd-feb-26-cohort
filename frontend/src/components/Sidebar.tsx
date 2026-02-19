@@ -4,6 +4,7 @@ import { ChevronFirst, ChevronLast } from "lucide-react";
 import { CircleUser } from "lucide-react";
 import { Settings } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
+import {Link} from "react-router-dom";
 
 type SidebarProps = {
   items: SidebarItem[];
@@ -42,8 +43,9 @@ const Sidebar = ({ items }: SidebarProps) => {
             return (
               <li
                 key={index}
-                className="relative flex items-center gap-2 p-3 hover:bg-gray-100 hover:text-green-600 rounded-md cursor-pointer group"
+              
               >
+                <Link to={item.path}   className="relative flex items-center gap-2 p-3 hover:bg-gray-100 hover:text-green-600 rounded-md cursor-pointer group">
                 <Icon size={30} />
                 <span
                   className={`font-bold whitespace-nowrap overflow-hidden transition-all ${expand ? "w-30 ml-3" : "w-0"}`}
@@ -53,6 +55,7 @@ const Sidebar = ({ items }: SidebarProps) => {
                 {!expand  && ( <div className={`
                 absolute left-full rounded-md px-2 py-1 ml-6 font-bold  text-green-500 text-sm invisible opacity-20 
                 translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}>{item.label}</div>)}
+                </Link>
               </li>
             );
           })}
