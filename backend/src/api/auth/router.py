@@ -1,36 +1,42 @@
 from fastapi import APIRouter, HTTPException, Query
 from ..supabase_client import supabase
-import os
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 @router.post("/magic-link")
-async def magicLink(email: str):
+async def send_magic_link(email: str):
     try:
-        response = supabase.auth.sign_in_with_otp({
+        redirect_url = f"http://localhost:8000/auth/callback"
+        supabase.auth.sign_in_with_otp({
             "email": email,
             "options": {
-                "email_redirect_to": "https://localhost:3000/"
+                "email_redirect_to": redirect_url,
+                "flow_type": "pkce"
             }
         })
         return {"message": "Magic link sent to your email"}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-    pass
-
 
 @router.get("/callback")
-async def callback(token_hash: str, type: str):
+async def callback(email: str, token_hash: str, type: str = "magiclink"):
     try:
         response = supabase.auth.sign_in_with_otp({
+            "email": email,
             "token_hash": token_hash,
-            "type": magicLink
+            "type": type
         })
+
+        session = response.session
+        user = response.user
+
         return {
-            "access_token": response.session["access_token"],
-            "refresh_token": response.session["refresh_token"],
-            "user": response.user
+            "msg": "Successfully authenticated",
+            "access_token": session.access_token,
+            "refresh_token": session.refresh_token,
+            "user": user.id,
+            "email": user.email,
         }
     except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid or expired magic link")
-    pass
+        print(f"Auth error: {e}")
+        raise HTTPException(status_code=401, detail=f"Authentication failed: {str(e)}")

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from auth.router import router as auth_router
+from .auth.router import router as auth_router
 from api.routes.health import router
 
 app = FastAPI()
