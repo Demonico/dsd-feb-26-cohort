@@ -1,37 +1,41 @@
+import { useState } from "react";
 import type { FormEvent } from "react";
 
 type AuthPageProps = {
-  email: string;
-  password: string;
   loading: boolean;
-  canSubmit: boolean;
-  onEmailChange: (value: string) => void;
-  onPasswordChange: (value: string) => void;
-  onLoginSubmit: (event: FormEvent<HTMLFormElement>) => Promise<void>;
-  onSignupClick: () => Promise<void>;
+  onLogin: (email: string, password: string) => Promise<void>;
+  onSignup: (email: string, password: string) => Promise<void>;
 };
 
 export function AuthPage({
-  email,
-  password,
   loading,
-  canSubmit,
-  onEmailChange,
-  onPasswordChange,
-  onLoginSubmit,
-  onSignupClick,
+  onLogin,
+  onSignup,
 }: AuthPageProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const canSubmit = Boolean(email.trim() && password.trim());
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await onLogin(email, password);
+  }
+
+  async function handleSignupClick() {
+    await onSignup(email, password);
+  }
+
   return (
     <>
       <p className="subtitle">Email/password sign in and sign up with Supabase.</p>
 
-      <form onSubmit={onLoginSubmit} className="login-form">
+      <form onSubmit={handleSubmit} className="login-form">
         <label>
           Email
           <input
             type="email"
             value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            onChange={(e) => setEmail(e.target.value)}
             placeholder="you@example.com"
             autoComplete="email"
             required
@@ -43,7 +47,7 @@ export function AuthPage({
           <input
             type="password"
             value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
+            onChange={(e) => setPassword(e.target.value)}
             placeholder="Your password"
             autoComplete="current-password"
             required
@@ -58,7 +62,7 @@ export function AuthPage({
             type="button"
             className="secondary"
             disabled={!canSubmit || loading}
-            onClick={onSignupClick}
+            onClick={handleSignupClick}
           >
             Sign up
           </button>

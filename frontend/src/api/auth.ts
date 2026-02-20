@@ -34,31 +34,41 @@ async function supabaseAuthRequest(
   return { response, data };
 }
 
+async function authenticateWithPassword(
+  path: AuthPath,
+  email: string,
+  password: string,
+  fallbackError: string,
+  requireToken: boolean,
+): Promise<string | null> {
+  const { response, data } = await supabaseAuthRequest(path, email, password);
+
+  if (!response.ok || (requireToken && !data.access_token)) {
+    throw new Error(data.error_description || data.msg || fallbackError);
+  }
+
+  return data.access_token ?? null;
+}
+
 export async function loginWithEmailPassword(email: string, password: string): Promise<string> {
-  const { response, data } = await supabaseAuthRequest(
+  const token = await authenticateWithPassword(
     "/auth/v1/token?grant_type=password",
     email,
     password,
+    "Supabase login failed",
+    true,
   );
-
-  if (!response.ok || !data.access_token) {
-    throw new Error(data.error_description || data.msg || "Supabase login failed");
+  if (!token) {
+    throw new Error("Supabase login failed");
   }
-
-  return data.access_token;
+  return token;
 }
 
 export async function signupWithEmailPassword(
   email: string,
   password: string,
 ): Promise<string | null> {
-  const { response, data } = await supabaseAuthRequest("/auth/v1/signup", email, password);
-
-  if (!response.ok) {
-    throw new Error(data.error_description || data.msg || "Supabase signup failed");
-  }
-
-  return data.access_token ?? null;
+  return authenticateWithPassword("/auth/v1/signup", email, password, "Supabase signup failed", false);
 }
 
 export async function fetchCurrentUser(): Promise<User> {

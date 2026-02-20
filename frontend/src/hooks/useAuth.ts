@@ -38,8 +38,7 @@ export function useAuth(): UseAuthResult {
       }
 
       try {
-        const currentUser = await fetchCurrentUser();
-        setUser(currentUser);
+        await loadCurrentUser();
       } catch {
         clearStoredAccessToken();
         setUser(null);
@@ -51,13 +50,35 @@ export function useAuth(): UseAuthResult {
     hydrateSession();
   }, []);
 
-  async function refreshUser() {
+  async function loadCurrentUser() {
+    const currentUser = await fetchCurrentUser();
+    setUser(currentUser);
+  }
+
+  function clearMessages() {
     setError(null);
     setNotice(null);
+  }
+
+  async function runWithLoading(task: () => Promise<void>, fallbackError: string) {
+    clearMessages();
+    setLoading(true);
 
     try {
-      const currentUser = await fetchCurrentUser();
-      setUser(currentUser);
+      await task();
+    } catch (e) {
+      const message = e instanceof Error ? e.message : fallbackError;
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function refreshUser() {
+    clearMessages();
+
+    try {
+      await loadCurrentUser();
     } catch (e) {
       const message = e instanceof Error ? e.message : "Backend verify failed";
       setError(message);
@@ -65,46 +86,24 @@ export function useAuth(): UseAuthResult {
   }
 
   async function login(email: string, password: string) {
-    setError(null);
-    setNotice(null);
-    setLoading(true);
-
-    try {
+    await runWithLoading(async () => {
       const accessToken = await loginWithEmailPassword(email, password);
       storeAccessToken(accessToken);
-
-      const currentUser = await fetchCurrentUser();
-      setUser(currentUser);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Login failed";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+      await loadCurrentUser();
+    }, "Login failed");
   }
 
   async function signup(email: string, password: string) {
-    setError(null);
-    setNotice(null);
-    setLoading(true);
-
-    try {
+    await runWithLoading(async () => {
       const accessToken = await signupWithEmailPassword(email, password);
       if (accessToken) {
         storeAccessToken(accessToken);
-
-        const currentUser = await fetchCurrentUser();
-        setUser(currentUser);
+        await loadCurrentUser();
         return;
       }
 
       setNotice("Signup successful. Confirm email if your Supabase project requires confirmation.");
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Signup failed";
-      setError(message);
-    } finally {
-      setLoading(false);
-    }
+    }, "Signup failed");
   }
 
   function logout() {
