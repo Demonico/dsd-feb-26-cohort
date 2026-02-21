@@ -1,7 +1,9 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
+
+from ..auth.dependencies import require_role
 
 router = APIRouter()
 
 @router.get("/drivers")
-def list_drivers():
-    return {"message": "List of drivers"}
+async def list_drivers(user: dict = Depends(require_role("driver"))):
+    return {"message": "List of drivers", "current_user": user["id"]}
