@@ -2,6 +2,24 @@ from fastapi import HTTPException, status
 from ..supabase_client import supabase
 from typing import Optional
 
+
+def _extract_role_from_user(user: object) -> Optional[str]:
+    app_metadata = getattr(user, "app_metadata", None) or {}
+    user_metadata = getattr(user, "user_metadata", None) or {}
+
+    role = app_metadata.get("role") or user_metadata.get("role")
+    if isinstance(role, str) and role in {"driver", "customer"}:
+        return role
+
+    roles = user_metadata.get("roles")
+    if isinstance(roles, list):
+        for candidate in roles:
+            if candidate in {"driver", "customer"}:
+                return candidate
+
+    return None
+
+
 async def verify_supabase_token(token: str) -> dict:
     try:
         response = supabase.auth.get_user(token)
@@ -15,7 +33,7 @@ async def verify_supabase_token(token: str) -> dict:
             "id": response.user.id,
             "email": response.user.email,
             "user_metadata": response.user.user_metadata,
-            "roles": response.user_metadata.get("roles", []) if response.user.user_metadata else [],
+            "role": _extract_role_from_user(response.user),
         }
     except Exception as e:
         raise HTTPException(
