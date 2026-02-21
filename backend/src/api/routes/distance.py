@@ -1,27 +1,30 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from src.services.distance_service import calculate_distance
+from src.services.distance_service import optimize_distance
 
 route = APIRouter(
     prefix="/distance",
     tags=["distance"]
 )
 
-class AddressInputModel(BaseModel):
-    destination: str
+class DestinationInputModel(BaseModel):
+    street: str
+    city: str
+    state: str
+    zip: str
+class OriginInputModel(BaseModel):
+    street: str
+    city: str
+    state: str
+    zip: str
     
 @route.post("/addresses")
-async def get_distance_between_addresses(origin: str, destinations: list[AddressInputModel]):
-    parsed_destinations = []
-    
-    for destination in destinations:
-        address_parts = [addr.strip() for addr in destination.destination.split(",")]
-        if len(address_parts) % 4 != 0:
-            raise HTTPException(status_code=400, detail=f"Invalid address format for destination: {destination.destination}. Expected format: 'street, city, state, zip'")
-        
-        for i in range(0, len(address_parts), 4):
-            parsed_address = ", ".join(address_parts[i:i+4])
-            parsed_destinations.append(parsed_address)
-        
-        
-    return calculate_distance(origin, destinations)
+async def get_distance_between_addresses(origin: OriginInputModel, destinations: list[DestinationInputModel]): 
+    parsed_destinations = [
+        f"{destination.street}, {destination.city}, {destination.state} {destination.zip}"
+        for destination in destinations
+    ]   
+    return optimize_distance(
+        origin=f"{origin.street}, {origin.city}, {origin.state} {origin.zip}", 
+        destinations=parsed_destinations
+    )
