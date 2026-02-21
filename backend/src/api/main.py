@@ -5,6 +5,7 @@ from .auth.router import router as auth_router
 from .routes.health import router
 from .routes.distance import route as distance_router
 from .routes.drivers import router as drivers_router
+from .routes.customers import router as customers_router
 
 app = FastAPI()
 
@@ -16,15 +17,12 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(auth_router)
-app.include_router(drivers_router)
-
-
 @app.get("/")  # todo: remove me
 def root():
     return {"message": "API running"}
 
-
 app.include_router(router)
 app.include_router(distance_router)
-
+app.include_router(auth_router)
+app.include_router(drivers_router)
+app.include_router(customers_router)
