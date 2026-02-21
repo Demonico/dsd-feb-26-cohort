@@ -39,22 +39,32 @@ version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
+<<<<<<< HEAD
+    { name = "requests" },
+=======
     { name = "python-dotenv" },
     { name = "sqlmodel" },
     { name = "supabase" },
+>>>>>>> main
     { name = "uvicorn" },
 ]
 
 [package.metadata]
 requires-dist = [
     { name = "fastapi", specifier = ">=0.128.0" },
+<<<<<<< HEAD
+    { name = "requests", specifier = ">=2.32.5" },
+=======
     { name = "python-dotenv", specifier = ">=1.0.0" },
     { name = "sqlmodel", specifier = ">=0.0.14" },
     { name = "supabase", specifier = ">=2.0.0" },
+>>>>>>> main
     { name = "uvicorn", specifier = ">=0.40.0" },
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "cachetools"
 version = "6.2.6"
 source = { registry = "https://pypi.org/simple" }
@@ -64,6 +74,7 @@ wheels = [
 ]
 
 [[package]]
+>>>>>>> main
 name = "certifi"
 version = "2026.1.4"
 source = { registry = "https://pypi.org/simple" }
@@ -73,6 +84,8 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "cffi"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
@@ -130,6 +143,7 @@ wheels = [
 ]
 
 [[package]]
+>>>>>>> main
 name = "charset-normalizer"
 version = "3.4.4"
 source = { registry = "https://pypi.org/simple" }
@@ -821,6 +835,8 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "pygments"
 version = "2.19.2"
 source = { registry = "https://pypi.org/simple" }
@@ -960,6 +976,7 @@ wheels = [
 ]
 
 [[package]]
+>>>>>>> main
 name = "requests"
 version = "2.32.5"
 source = { registry = "https://pypi.org/simple" }
@@ -975,6 +992,8 @@ wheels = [
 ]
 
 [[package]]
+<<<<<<< HEAD
+=======
 name = "rich"
 version = "14.3.2"
 source = { registry = "https://pypi.org/simple" }
@@ -1052,6 +1071,7 @@ wheels = [
 ]
 
 [[package]]
+>>>>>>> main
 name = "starlette"
 version = "0.50.0"
 source = { registry = "https://pypi.org/simple" }

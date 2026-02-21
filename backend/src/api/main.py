@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from .auth.router import router as auth_router
 from api.routes.health import router
-from api.routes import drivers
+from api.routes.distance import route as distance_router
 
 app = FastAPI()
 
@@ -24,4 +24,5 @@ def root():
 
 
 app.include_router(router)
-app.include_router(drivers.router)
+app.include_router(distance_router)
+
