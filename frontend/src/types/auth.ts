@@ -7,4 +7,5 @@ export type SupabaseAuthResponse = {
 export type User = {
   id: string;
   email: string;
+  role?: "driver" | "customer";
 };
