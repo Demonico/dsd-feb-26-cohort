@@ -1,11 +1,13 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
 
 import { AuthPage } from "./components/auth/AuthPage";
-import { DashboardPage } from "./components/dashboard/DashboardPage";
+import Sidebar from "./components/Sidebar";
+import { sidebarItems } from "./components/sidebarItems";
 import { useAuth } from "./hooks/useAuth";
 import "./App.css";
 import DriverManifest from "./pages/DriverManifest";
 import CustomerPage from "./pages/CustomerPage";
+import Dashboard from "./pages/Dashboard";
 import type { ReactNode } from "react";
 import type { User } from "./types/auth";
 
@@ -21,22 +23,16 @@ function RoleGuard({ user, allowed, children }: RoleGuardProps) {
   return <>{children}</>;
 }
 
-function App() {
-  const {
-    user,
-    hydrating,
-    loading,
-    error,
-    notice,
-    login,
-    signup,
-    refreshUser,
-    logout,
-  } = useAuth();
+function AppRoutes() {
+  const { user, hydrating, loading, error, notice, login, signup, logout } = useAuth();
+  const location = useLocation();
+  const showSidebar = Boolean(user) && location.pathname !== "/login";
 
   return (
-    <BrowserRouter>
-      <main className="app-shell">
+    <main className={showSidebar ? "flex min-h-screen" : "app-shell"}>
+      {showSidebar ? <Sidebar items={sidebarItems} user={user} onLogout={logout} /> : null}
+
+      <section className={showSidebar ? "flex-1 p-6" : ""}>
         <h1>Fleet Dashboard</h1>
 
         {error ? <p className="error">{error}</p> : null}
@@ -65,11 +61,7 @@ function App() {
               path="/dashboard"
               element={
                 user ? (
-                  <DashboardPage
-                    user={user}
-                    onRefreshUser={refreshUser}
-                    onLogout={logout}
-                  />
+                  <Dashboard />
                 ) : (
                   <Navigate to="/login" replace />
                 )
@@ -100,7 +92,15 @@ function App() {
             />
           </Routes>
         )}
-      </main>
+      </section>
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <AppRoutes />
     </BrowserRouter>
   );
 }

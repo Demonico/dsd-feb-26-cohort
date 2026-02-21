@@ -2,18 +2,19 @@ import { useState } from "react";
 import logo from "../assets/image.jpeg";
 import { ChevronFirst, ChevronLast } from "lucide-react";
 import { CircleUser } from "lucide-react";
-import { Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
 import { Link } from "react-router-dom";
-import { useAuth } from "../hooks/useAuth";
+import type { User } from "../types/auth";
 
 type SidebarProps = {
   items: SidebarItem[];
+  user: User | null;
+  onLogout: () => void;
 };
 
-const Sidebar = ({ items }: SidebarProps) => {
+const Sidebar = ({ items, user, onLogout }: SidebarProps) => {
   const [expand, setExpand] = useState(true);
-  const { user } = useAuth();
 
   const allowedPathsByRole: Record<string, string[]> = {
     driver: ["/dashboard", "/driver"],
@@ -92,14 +93,14 @@ const Sidebar = ({ items }: SidebarProps) => {
               <p className="text-xs">{user?.role ?? "—"}</p>
             </div>
           </div>
-          <div
-            className={`overflow-hidden transition-all ${expand ? "w-30 ml-1" : "w-0"}`}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="cursor-pointer hover:bg-gray-300 rounded-xl p-1"
+            title="Logout"
           >
-            <Settings
-              size={30}
-              className="cursor-pointer hover:bg-gray-300 rounded-xl "
-            />
-          </div>
+            <LogOut size={24} />
+          </button>
         </div>
       </nav>
     </div>
