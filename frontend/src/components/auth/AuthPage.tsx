@@ -1,10 +1,11 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
+import type { Role } from "../../types/auth";
 
 type AuthPageProps = {
   loading: boolean;
   onLogin: (email: string, password: string) => Promise<void>;
-  onSignup: (email: string, password: string) => Promise<void>;
+  onSignup: (email: string, password: string, role: Role) => Promise<void>;
 };
 
 export function AuthPage({
@@ -14,6 +15,7 @@ export function AuthPage({
 }: AuthPageProps) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [role, setRole] = useState<Role>("customer");
   const canSubmit = Boolean(email.trim() && password.trim());
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -22,7 +24,7 @@ export function AuthPage({
   }
 
   async function handleSignupClick() {
-    await onSignup(email, password);
+    await onSignup(email, password, role);
   }
 
   return (
@@ -52,6 +54,17 @@ export function AuthPage({
             autoComplete="current-password"
             required
           />
+        </label>
+        <label>
+          Role
+          <select
+            value={role}
+            onChange={(e) => setRole(e.target.value as Role)}
+            disabled={loading}
+          >
+            <option value="customer">Customer</option>
+            <option value="driver">Driver</option>
+          </select>
         </label>
 
         <div className="actions">
