@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
 from ..supabase_client import supabase, supabase_admin
-from typing import Optional
+from typing import Literal, Optional
 
-
+# Helper function to fetch the user's role from the profiles table based on their user ID
 def _get_role_from_profiles(user_id: str) -> Optional[str]:
     client = supabase_admin or supabase
     response = (
@@ -22,7 +22,7 @@ def _get_role_from_profiles(user_id: str) -> Optional[str]:
         return role
     return None
 
-
+# Verify the Supabase token and return the user's info (id, email, role) if valid, otherwise raise an HTTPException with a 401 status code
 async def verify_supabase_token(token: str) -> dict:
     try:
         response = supabase.auth.get_user(token)
@@ -44,6 +44,28 @@ async def verify_supabase_token(token: str) -> dict:
             detail=f"Token verification failed: {str(e)}",
         )
 
+# Upsert the user's role in the profiles table based on their user ID
+# If the profile already exists, it will update the role; if it doesn't exist, it will create a new profile with the given role
+# Returns the updated or created profile data
+def upsert_profile_role(user_id: str, role: Literal["driver", "customer"]) -> dict:
+    client = supabase_admin or supabase
+    response = (
+        client.table("profiles")
+        .upsert({"id": user_id, "role": role}, on_conflict="id")
+        .execute()
+    )
+
+    data = response.data or []
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Failed to upsert profile role",
+        )
+    return data[0]
+
+# Admin functions to manage users in Supabase
+# These functions use the admin client to list users, confirm email, and delete users
+# They handle exceptions and return appropriate results or error messages
 async def get_user_by_email(email: str) -> Optional[dict]:
     try:
         response = supabase.auth.admin.list_users()
