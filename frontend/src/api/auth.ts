@@ -1,5 +1,5 @@
 import http, { ACCESS_TOKEN_KEY } from "./http";
-import type { SupabaseAuthResponse, User } from "../types/auth";
+import type { Role, SupabaseAuthResponse, User } from "../types/auth";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -18,6 +18,7 @@ async function supabaseAuthRequest(
   path: AuthPath,
   email: string,
   password: string,
+  role?: Role,
 ): Promise<{ response: Response; data: SupabaseAuthResponse }> {
   const { url, anonKey } = assertSupabaseEnv();
 
@@ -27,7 +28,11 @@ async function supabaseAuthRequest(
       "Content-Type": "application/json",
       apikey: anonKey,
     },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({
+      email,
+      password,
+      ...(role ? { data: { role } } : {}),
+    }),
   });
 
   const data = (await response.json()) as SupabaseAuthResponse;
@@ -40,8 +45,9 @@ async function authenticateWithPassword(
   password: string,
   fallbackError: string,
   requireToken: boolean,
+  role?: Role,
 ): Promise<string | null> {
-  const { response, data } = await supabaseAuthRequest(path, email, password);
+  const { response, data } = await supabaseAuthRequest(path, email, password, role);
 
   if (!response.ok || (requireToken && !data.access_token)) {
     throw new Error(data.error_description || data.msg || fallbackError);
@@ -67,8 +73,20 @@ export async function loginWithEmailPassword(email: string, password: string): P
 export async function signupWithEmailPassword(
   email: string,
   password: string,
+  role: Role,
 ): Promise<string | null> {
-  return authenticateWithPassword("/auth/v1/signup", email, password, "Supabase signup failed", false);
+  return authenticateWithPassword(
+    "/auth/v1/signup",
+    email,
+    password,
+    "Supabase signup failed",
+    false,
+    role,
+  );
+}
+
+export async function registerCurrentUserRole(role: Role): Promise<void> {
+  await http.post("/auth/role", { role });
 }
 
 export async function fetchCurrentUser(): Promise<User> {

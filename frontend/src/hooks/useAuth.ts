@@ -5,10 +5,11 @@ import {
   fetchCurrentUser,
   getStoredAccessToken,
   loginWithEmailPassword,
+  registerCurrentUserRole,
   signupWithEmailPassword,
   storeAccessToken,
 } from "../api/auth";
-import type { User } from "../types/auth";
+import type { Role, User } from "../types/auth";
 
 type UseAuthResult = {
   user: User | null;
@@ -17,7 +18,7 @@ type UseAuthResult = {
   error: string | null;
   notice: string | null;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, role: Role) => Promise<void>;
   refreshUser: () => Promise<void>;
   logout: () => void;
 };
@@ -53,6 +54,7 @@ export function useAuth(): UseAuthResult {
   async function loadCurrentUser() {
     const currentUser = await fetchCurrentUser();
     setUser(currentUser);
+    return currentUser;
   }
 
   function clearMessages() {
@@ -89,15 +91,21 @@ export function useAuth(): UseAuthResult {
     await runWithLoading(async () => {
       const accessToken = await loginWithEmailPassword(email, password);
       storeAccessToken(accessToken);
-      await loadCurrentUser();
+      const currentUser = await loadCurrentUser();
+      const roleFromMetadata = currentUser.user_metadata?.role;
+      if (!currentUser.role && roleFromMetadata) {
+        await registerCurrentUserRole(roleFromMetadata);
+        await loadCurrentUser();
+      }
     }, "Login failed");
   }
 
-  async function signup(email: string, password: string) {
+  async function signup(email: string, password: string, role: Role) {
     await runWithLoading(async () => {
-      const accessToken = await signupWithEmailPassword(email, password);
+      const accessToken = await signupWithEmailPassword(email, password, role);
       if (accessToken) {
         storeAccessToken(accessToken);
+        await registerCurrentUserRole(role);
         await loadCurrentUser();
         return;
       }
