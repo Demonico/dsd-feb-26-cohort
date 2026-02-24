@@ -2,26 +2,31 @@ import { useState } from "react";
 import logo from "../assets/image.jpeg";
 import { ChevronFirst, ChevronLast } from "lucide-react";
 import { CircleUser } from "lucide-react";
-import { Settings } from "lucide-react";
+import { LogOut } from "lucide-react";
 import type { SidebarItem } from "../types/sidebar";
-import {Link} from "react-router-dom";
-
-import {House,Truck,Map,Users} from "lucide-react";
-
-export const items  = [
-  {label:"Dashboard",icon:House,path:"/dashboard"},
-  {label:"Driver Manifest",icon:Truck,path:"/driver-manifest"},
-  {label:"Map",icon:Map,path:"/map"},
-  {label:"Customers",icon:Users,path:"/customers"},
-]
-
+import { Link } from "react-router-dom";
+import type { User } from "../types/auth";
 
 type SidebarProps = {
   items: SidebarItem[];
+  user: User | null;
+  onLogout: () => void;
 };
 
-const Sidebar = ({ items }: SidebarProps) => {
+const Sidebar = ({ items, user, onLogout }: SidebarProps) => {
   const [expand, setExpand] = useState(true);
+
+  const allowedPathsByRole: Record<string, string[]> = {
+    driver: ["/dashboard", "/driver"],
+    customer: ["/dashboard", "/customer"],
+  };
+
+  const visibleItems = user?.role
+    ? items.filter((it) =>
+        allowedPathsByRole[user.role ?? ""]?.includes(it.path),
+      )
+    : items.filter((it) => it.path === "/dashboard");
+
   return (
     <div
       className={`h-screen bg-gray-100 transition-all ${expand ? "w-64" : "w-20"}`}
@@ -47,24 +52,31 @@ const Sidebar = ({ items }: SidebarProps) => {
         </div>
 
         <ul className="flex-1 px-3 ">
-          {items.map((item, index) => {
+          {visibleItems.map((item, index) => {
             const Icon = item.icon;
 
             return (
-              <li
-                key={index}
-              
-              >
-                <Link to={item.path}   className="relative flex items-center gap-2 p-3 hover:bg-gray-100 hover:text-green-600 rounded-md cursor-pointer group">
-                <Icon size={30} />
-                <span
-                  className={`font-bold whitespace-nowrap overflow-hidden transition-all ${expand ? "w-30 ml-3" : "w-0"}`}
+              <li key={index}>
+                <Link
+                  to={item.path}
+                  className="relative flex items-center gap-2 p-3 hover:bg-gray-100 hover:text-green-600 rounded-md cursor-pointer group"
                 >
-                  {item.label}
-                </span>
-                {!expand  && ( <div className={`
-                absolute left-full rounded-md px-2 py-1 ml-6 font-bold  text-green-500 text-sm invisible opacity-20 
-                translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}>{item.label}</div>)}
+                  <Icon size={30} />
+                  <span
+                    className={`font-bold whitespace-nowrap overflow-hidden transition-all ${
+                      expand ? "w-30 ml-3" : "w-0"
+                    }`}
+                  >
+                    {item.label}
+                  </span>
+                  {!expand && (
+                    <div
+                      className={`absolute left-full rounded-md px-2 py-1 ml-6 font-bold  text-green-500 text-sm invisible opacity-20 
+                translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
+                    >
+                      {item.label}
+                    </div>
+                  )}
                 </Link>
               </li>
             );
@@ -77,18 +89,18 @@ const Sidebar = ({ items }: SidebarProps) => {
             <div
               className={`overflow-hidden transition-all ${expand ? "w-30 ml-1" : "w-0"}`}
             >
-              <h2 className="font-semibold">John Doe</h2>
-              <p className="text-xs">Driver</p>
+              <h2 className="font-semibold">{user?.email ?? "Guest"}</h2>
+              <p className="text-xs">{user?.role ?? "—"}</p>
             </div>
           </div>
-          <div
-            className={`overflow-hidden transition-all ${expand ? "w-30 ml-1" : "w-0"}`}
+          <button
+            type="button"
+            onClick={onLogout}
+            className="cursor-pointer hover:bg-gray-300 rounded-xl p-1"
+            title="Logout"
           >
-            <Settings
-              size={30}
-              className="cursor-pointer hover:bg-gray-300 rounded-xl "
-            />
-          </div>
+            <LogOut size={24} />
+          </button>
         </div>
       </nav>
     </div>

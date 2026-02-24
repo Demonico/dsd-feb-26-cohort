@@ -1,7 +1,7 @@
 import type { LucideIcon } from "lucide-react";
 
 export type SidebarItem = {
-  label: String;
+  label: string;
   icon: LucideIcon;
-  path:string
+  path: string;
 };
