@@ -35,8 +35,8 @@ async def _require_driver_role(user_id: str) -> None:
         )
 
 
-@router.get("/me")
-async def get_my_driver(user: dict = Depends(get_current_user)):
+@router.get("/user")
+async def get_driver(user: dict = Depends(get_current_user)):
     _require_supabase_admin()
     user_id = user["id"]
 
@@ -54,7 +54,7 @@ async def get_my_driver(user: dict = Depends(get_current_user)):
     return res.data
 
 
-@router.post("/me")
+@router.post("/user")
 async def upsert_my_driver(payload: DriverUpsert, user: dict = Depends(get_current_user)):
     _require_supabase_admin()
     user_id = user["id"]
