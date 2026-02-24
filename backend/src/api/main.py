@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from .auth.router import router as auth_router
 from api.routes.health import router
 from api.routes.distance import route as distance_router
+from api.routes.drivers import router as drivers_router
 
 app = FastAPI()
 
