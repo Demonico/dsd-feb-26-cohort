@@ -2,7 +2,7 @@
 erDiagram
     CUSTOMERS {
         UUID customer_id PK
-        UUID user_id FK
+        UUID id FK
         string customer_name
         string billing_address
         string phone
@@ -11,6 +11,7 @@ erDiagram
 
     SERVICE_LOCATIONS {
         UUID location_id PK
+        UUID route_id FK
         UUID customer_id FK
         UUID job_id FK
         string street_address
@@ -20,7 +21,6 @@ erDiagram
 
     DRIVERS {
         UUID driver_id PK
-        UUID user_id FK
         string driver_name
     }
 
@@ -48,9 +48,10 @@ erDiagram
         photos proof_of_service_photo
     }
 
-    REQUESTS {
+    SERVICE_REQUESTS {
         UUID request_id PK
         UUID location_id FK
+        UUID job_id FK
         string request_type "SKIP|EXTRA"
         datetime requested_for_date
         datetime created_at
@@ -58,17 +59,18 @@ erDiagram
     }
 
     PROFILES {
-        UUID user_id PK
+        UUID id PK
         string role "Customer|Driver"
     }
 
     %% Relationships
-    CUSTOMERS ||--o{ SERVICE_LOCATIONS : "owns"
+    CUSTOMERS ||--o{ SERVICE_LOCATIONS : "owned"
     CUSTOMERS ||--o| PROFILES : "linked"
     DRIVERS ||--o{ ROUTES : "assigned_to"
     DRIVERS ||--o| PROFILES : "linked"
     ROUTES ||--o{ SERVICE_JOBS : "executes"
-    SERVICE_JOBS ||--o| REQUESTS : "generates"
+    ROUTES ||--o{ SERVICE_LOCATIONS : "belonged"
+    SERVICE_JOBS ||--o| SERVICE_REQUESTS : "generates"
     SERVICE_LOCATIONS ||--o{ SERVICE_JOBS : "has_history"
-    SERVICE_LOCATIONS ||--o{ REQUESTS : "generates"
+    SERVICE_LOCATIONS ||--o{ SERVICE_REQUESTS : "generates"
 ```

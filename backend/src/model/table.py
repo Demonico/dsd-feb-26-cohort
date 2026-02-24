@@ -21,7 +21,7 @@ class Customer(SQLModel, table=True):
     __tablename__ = "customers"
 
     customer_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
-    user_id: UUID = Field(foreign_key="profiles.user_id", index=True)
+    user_id: UUID = Field(foreign_key="profiles.id", index=True)
     customer_name: str
     address: str
     phone : str
@@ -33,14 +33,14 @@ class Location(SQLModel, table=True):
     customer_id: UUID = Field(foreign_key="customers.customer_id", index=True)
     route_id: UUID = Field(foreign_key="routes.route_id", index=True)
     street_address : str
-    lat : float
-    long : float
+    city : str
+    zipcode : int
+    state : str
 
 class Driver(SQLModel, table=True):
     __tablename__ = "drivers"
 
     driver_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
-    user_id: UUID = Field(foreign_key="profiles.user_id", index=True)
     driver_name: str
 
 class Routes(SQLModel, table=True):
@@ -50,9 +50,7 @@ class Routes(SQLModel, table=True):
     driver_id: UUID = Field(foreign_key="drivers.driver_id", index=True)
     service_date : datetime
     start_location_name : str
-    start_lat : float
-    start_long : float
-    status : str #What is this for?
+    status : str
 
 class Request(SQLModel, table=True):
     __tablename__ = "requests"
@@ -97,7 +95,7 @@ class UserRole(str, Enum):
 
 class Profile(SQLModel, table=True):
     __tablename__ = "profiles"
-    user_id: UUID = Field(primary_key=True, index=True)
+    id: UUID = Field(foreign_key="auth.users.id", index=True)
     role: UserRole = Field(index=True)
 
 
