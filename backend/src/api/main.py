@@ -26,4 +26,5 @@ def root():
 
 app.include_router(router)
 app.include_router(distance_router)
+app.include_router(drivers_router)
 
