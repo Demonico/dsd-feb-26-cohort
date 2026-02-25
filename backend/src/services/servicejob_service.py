@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-
+from uuid import UUID
 from api.supabase_client import supabase, supabase_admin
 
 
@@ -10,10 +10,11 @@ def list_service_jobs_by_location(location_id: str) -> list[dict]:
         response = (
             client.table("service_jobs")
             .select("*")
-            .eq("location_id", location_id)
+            .eq("location_id", str(location_id))
             .execute()
         )
     except Exception as exc:
+        exc_status = getattr(exc, "status", None) or getattr(exc, "status_code", None)
         if exc.status == status.HTTP_401_UNAUTHORIZED:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
@@ -25,7 +26,5 @@ def list_service_jobs_by_location(location_id: str) -> list[dict]:
                 detail=f"Failed to fetch service jobs: {exc}",
             )
         else: 
-            raise HTTPException(
-                detail=f"Error: {exc}",
-            )
+            print(f"Exception message: {str(exc)}")
     return response.data or []
