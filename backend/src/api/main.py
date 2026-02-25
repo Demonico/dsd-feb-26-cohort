@@ -6,6 +6,9 @@ from .routes.health import router
 from .routes.distance import route as distance_router
 from .routes.drivers import router as drivers_router
 from .routes.customers import router as customers_router
+from api.routes.health import router
+from api.routes.distance import route as distance_router
+from api.routes.servicejobs import router as servicejobs_router
 
 app = FastAPI()
 
@@ -26,3 +29,5 @@ app.include_router(distance_router)
 app.include_router(auth_router)
 app.include_router(drivers_router)
 app.include_router(customers_router)
+app.include_router(servicejobs_router)
+
