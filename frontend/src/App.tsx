@@ -21,7 +21,7 @@ function App() {
   return (
     <BrowserRouter>
       <main className="app-shell">
-        <h1>Fleet Dashboard</h1>
+        {/* <h1>Fleet Dashboard</h1> */}
 
         {error ? <p className="error">{error}</p> : null}
         {notice ? <p className="notice">{notice}</p> : null}
