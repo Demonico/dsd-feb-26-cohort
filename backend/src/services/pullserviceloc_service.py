@@ -3,7 +3,7 @@ from uuid import UUID
 from api.supabase_client import supabase, supabase_admin
 
 
-def list_service_jobs_by_location(location_id: str) -> list[dict]:
+def list_service_jobs_by_location(location_id: UUID) -> list[dict]:
     client = supabase_admin or supabase
 
     try:
