@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from typing import List, Optional
+from typing import List, Literal, Optional
 from pydantic import BaseModel
 from datetime import date, datetime
 from src.services import customer_requests_service
@@ -12,9 +12,9 @@ router = APIRouter(
 class RequestBase(BaseModel):
     location_id: Optional[int] = None
     customer_id: Optional[int] = None
-    request_type: Optional[str] = None
+    request_type: Literal["SKIP", "EXTRA"] | None = None
     requested_for_date: Optional[date] = None
-    status: Optional[str] = None
+    status: Literal["PENDING", "COMPLETED", "FAILED", "SKIPPED"] | None = None
 
 class RequestCreate(RequestBase):
     created_at: Optional[datetime] = None
@@ -31,7 +31,7 @@ def read_requests():
     return customer_requests_service.get_all_requests()
 
 
-@router.get("/requests_type")
+@router.get("/request_type")
 def get_request_type():
     return customer_requests_service.get_all_request_type()
 

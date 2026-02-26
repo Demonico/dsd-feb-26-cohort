@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List, Literal, Optional
 from datetime import date
 from src.services import garbage_routes_service
 
@@ -13,7 +13,7 @@ router = APIRouter(
 class GarbageRouteBase(BaseModel):
     driver_id: Optional[int] = None
     service_date: Optional[date] = None
-    status: Optional[str] = None
+    status: Literal["PENDING", "COMPLETED", "FAILED", "SKIPPED"] | None = None
     start_street_address: Optional[str] = None
     start_city: Optional[str] = None
     start_state: Optional[str] = None
