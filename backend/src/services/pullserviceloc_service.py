@@ -10,7 +10,7 @@ def list_service_jobs_by_location(location_id: UUID) -> list[dict]:
         response = (
             client.table("service_jobs")
             .select("*")
-            .eq("location_id", UUID) 
+            .eq("location_id", str(location_id)) 
             .execute()
         )
     except Exception as exc:
