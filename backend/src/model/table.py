@@ -34,6 +34,7 @@ class Customer(SQLModel, table=True):
     __tablename__ = "customers"
 
     customer_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
+    user_id: UUID = Field(foreign_key="users.id", unique=True, index=True)
     customer_name: str
     billing_address: str
     phone : str
@@ -54,6 +55,7 @@ class Driver(SQLModel, table=True):
     __tablename__ = "drivers"
 
     driver_id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
+    user_id: UUID = Field(foreign_key="users.id", unique=True, index=True)
     driver_name: str
 
 class Routes(SQLModel, table=True):
@@ -76,13 +78,21 @@ class ServiceJob(SQLModel, table=True):
         index=True,
         nullable=True,
     )
-    request_id = Field(foreign_key="requests.request_id", index=True)
-    sequence_order : int
     job_source: JobSource = Field(index=True)
     completed_at: Optional[datetime] = Field(default=None, index=True)
     status: JobStatus = Field(default=JobStatus.PENDING, index=True)
     failure_reason: Optional[str] = Field(default=None, nullable=True)
     proof_of_service_photo: Optional[str] = Field(default=None, nullable=True)
+
+class UserRole(str, Enum):
+    DRIVER = "driver"
+    CUSTOMER = "customer"
+
+class User(SQLModel, table=True):
+    __tablename__ = "users"
+    id: UUID = Field(primary_key=True, index=True, foreign_key="auth.users.id")
+    role: Optional[UserRole] = Field(default=None, index=True)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 class Service_Request(SQLModel, table=True):
     __tablename__ = "requests"
@@ -94,16 +104,3 @@ class Service_Request(SQLModel, table=True):
     requested_for_date: datetime = Field(index=True)
     created_at: datetime
     status: RequestStatus = Field(default=RequestStatus.PENDING, index=True)
-
-class Profile(SQLModel, table=True):
-    __tablename__ = "profiles"
-    id: UUID = Field(foreign_key="auth.users.id", index=True)
-    user_id: UUID = Field(foreign_key="users.id", index=True)
-    role: UserRole = Field(index=True)
-
-class User(SQLModel, table=True):
-    __tablename__ = "users"
-    id: UUID = Field(default_factory=uuid4, primary_key=True, index=True)
-    profile_id : UUID = Field(foreign_key="profile.id", index = True)
-    customer_id : UUID = Field(foreign_key="customers.customer_id", index = True)
-    driver_id : UUID = Field(foreign_key="drivers.driver_id", index = True)
