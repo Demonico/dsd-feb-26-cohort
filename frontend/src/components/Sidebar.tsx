@@ -1,4 +1,4 @@
-import { useState } from "react";
+
 import logo from "../assets/image.jpeg";
 import { ChevronFirst, ChevronLast } from "lucide-react";
 import { CircleUser } from "lucide-react";
@@ -29,9 +29,9 @@ const Sidebar = ({ items, user, onLogout }: SidebarProps) => {
 
   return (
     <div
-      className={`h-screen bg-gray-100 transition-all ${expand ? "w-64" : "w-20"}`}
+      className={`h-screen fixed top-0 left-0 bg-gray-100 transition-all ${expand ? "w-64" : "w-20"}`}
     >
-      <nav className="h-full flex flex-col gap-15">
+      <nav className="h-full flex flex-col gap-15 ">
         <div className="p-3 pb-2 flex items-center justify-between">
           <img
             src={logo}

@@ -1,5 +1,6 @@
 import RouteDetails from "../components/RouteDetails";
 import ManifestDetails from "@/components/ManifestDetails";
+import Manifest from "@/components/Manifest";
 const DriverManifest = () => {
   return (
     <div>
@@ -7,6 +8,8 @@ const DriverManifest = () => {
       <RouteDetails/>
       <div className="border-2 p-4 rounded-sm">
         <ManifestDetails/>
+        <Manifest/>
+
       </div>
       
 

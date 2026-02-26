@@ -15,12 +15,12 @@ def list_service_jobs_by_location(location_id: str) -> list[dict]:
         )
     except Exception as exc:
         exc_status = getattr(exc, "status", None) or getattr(exc, "status_code", None)
-        if exc.status == status.HTTP_401_UNAUTHORIZED:
+        if exc_status == status.HTTP_401_UNAUTHORIZED:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail=f"Unauthorized: {exc}",
             )
-        elif exc.status == status.HTTP_500_INTERNAL_SERVER_ERROR:
+        elif exc_status == status.HTTP_500_INTERNAL_SERVER_ERROR:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
                 detail=f"Failed to fetch service jobs: {exc}",
