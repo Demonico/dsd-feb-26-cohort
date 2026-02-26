@@ -14,7 +14,7 @@ erDiagram
         UUID job_id FK
         string street_address
         str city
-        int zipcode
+        str zipcode
         str state
     }
 

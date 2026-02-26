@@ -47,7 +47,7 @@ class Location(SQLModel, table=True):
     job_id: UUID = Field(foreign_key="profiles.id", index=True)
     street_address : str
     city : str
-    zipcode : int
+    zipcode : str
     state : str
 
 class Driver(SQLModel, table=True):
