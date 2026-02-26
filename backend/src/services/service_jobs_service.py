@@ -1,0 +1,47 @@
+from datetime import datetime, timezone
+from typing import Any
+from uuid import UUID
+
+from fastapi import HTTPException, status
+
+from api.supabase_client import supabase, supabase_admin
+
+
+def update_service_job_metadata(job_id: UUID, updates: dict[str, Any]) -> dict[str, Any]:
+    if not updates:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="At least one metadata field is required",
+        )
+
+    if updates.get("status") == "COMPLETED" and "completed_at" not in updates:
+        updates["completed_at"] = datetime.now(timezone.utc).isoformat()
+
+    client = supabase_admin or supabase
+
+    try:
+        response = (
+            client.table("service_jobs")
+            .update(updates)
+            .eq("job_id", str(job_id))
+            .select(
+                "job_id,location_id,route_id,sequence_order,job_source,"
+                "completed_at,status,failure_reason,proof_of_service_photo"
+            )
+            .limit(1)
+            .execute()
+        )
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to update service job metadata: {exc}",
+        )
+
+    data = response.data or []
+    if not data:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Service job not found: {job_id}",
+        )
+
+    return data[0]
