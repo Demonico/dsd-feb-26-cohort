@@ -1,14 +1,16 @@
 from fastapi import HTTPException, status
+from uuid import UUID
 from api.supabase_client import supabase, supabase_admin
 
-def list_drivers() -> list[dict]:
+
+def list_service_jobs_by_location(location_id: UUID) -> list[dict]:
     client = supabase_admin or supabase
 
     try:
         response = (
-            client.table("drivers")
-            .select("driver_id,driver_name")
-            .order("driver_name")
+            client.table("service_jobs")
+            .select("*")
+            .eq("location_id", str(location_id)) 
             .execute()
         )
     except Exception as exc:
@@ -21,7 +23,7 @@ def list_drivers() -> list[dict]:
         elif exc_status == status.HTTP_500_INTERNAL_SERVER_ERROR:
             raise HTTPException(
                 status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Failed to fetch drivers: {exc}",
+                detail=f"Failed to fetch service jobs: {exc}",
             )
         else: 
             print(f"Exception message: {str(exc)}")
