@@ -4,9 +4,9 @@ import {
   Route,
   Routes,
   useLocation,
-  
+
 } from "react-router-dom";
-import {useState} from "react";
+import { useState } from "react";
 
 import { AuthPage } from "./components/auth/AuthPage";
 import Sidebar from "./components/Sidebar";
@@ -45,11 +45,11 @@ function AppRoutes() {
       ) : null}
 
       <section
-  className="transition-all duration-300 p-6"
-  style={{
-    marginLeft: showSidebar ? (expand ? 256 : 80) : 0, //
-  }}
->
+        className="transition-all duration-300 p-6"
+        style={{
+          marginLeft: showSidebar ? (expand ? 256 : 80) : 0,
+        }}
+      >
 
         {/* Displays error and notice messages if they exist */}
         {/* {error ? <p className="error">{error}</p> : null}
@@ -64,11 +64,11 @@ function AppRoutes() {
               element={
                 user ? (
                   user.role == "driver" ? (
-                    <Navigate to="/driver"/>
-                  ):(
-                    <Navigate to="/customer"/>
+                    <Navigate to="/dashboard" />
+                  ) : (
+                    <Navigate to="/customer" />
                   )
-                 
+
                 ) : (
                   <AuthPage
                     loading={loading}
@@ -81,7 +81,17 @@ function AppRoutes() {
 
             <Route
               path="/dashboard"
-              element={user ? <Dashboard /> : <Navigate to="/login" replace />}
+              element={
+                user ? (
+                  user.role === "driver" ? (
+                   <Dashboard/>
+                  ) : (
+                    <Navigate to="/customer" replace />
+                  )
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
 
             <Route
