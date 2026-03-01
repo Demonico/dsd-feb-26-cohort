@@ -12,7 +12,7 @@ erDiagram
         UUID location_id PK
         UUID route_id FK
         UUID customer_id FK
-        UUID job_id FK
+        int8 job_id FK
         string street_address
         str city
         str zipcode
@@ -35,7 +35,7 @@ erDiagram
     }
 
     SERVICE_JOBS {
-        UUID job_id PK
+        int8 job_id PK
         UUID location_id FK
         UUID route_id FK
         UUID request_id FK
@@ -50,7 +50,7 @@ erDiagram
     SERVICE_REQUESTS {
         UUID request_id PK
         UUID location_id FK
-        UUID job_id FK
+        int8 job_id FK
         string request_type "SKIP|EXTRA"
         datetime requested_for_date
         datetime created_at
