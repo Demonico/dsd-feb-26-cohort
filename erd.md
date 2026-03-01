@@ -1,18 +1,18 @@
 ```mermaid
 erDiagram
     CUSTOMERS {
-        UUID customer_id PK
-        UUID user_id FK
+        int8 customer_id PK
+        int8 user_id FK
         string customer_name
         string billing_address
         string phone
     }
 
     SERVICE_LOCATIONS {
-        UUID location_id PK
-        UUID route_id FK
-        UUID customer_id FK
-        UUID job_id FK
+        int8 location_id PK
+        int8 route_id FK
+        int8 customer_id FK
+        int8 job_id FK
         string street_address
         str city
         str zipcode
@@ -20,25 +20,25 @@ erDiagram
     }
 
     DRIVERS {
-        UUID driver_id PK
-        UUID user_id FK
+        int8 driver_id PK
+        int8 user_id FK
         string driver_name
     }
 
     %% Dynamic / Daily Data
     ROUTES {
-        UUID route_id PK
-        UUID driver_id FK
+        int8 route_id PK
+        int8 driver_id FK
         date service_date
         string start_location_name
         string status
     }
 
     SERVICE_JOBS {
-        UUID job_id PK
-        UUID location_id FK
-        UUID route_id FK
-        UUID request_id FK
+        int8 job_id PK
+        int8 location_id FK
+        int8 route_id FK
+        int8 request_id FK
         int sequence_order
         string job_source "SCHEDULED|EXTRA_REQUEST"
         datetime completed_at
@@ -48,9 +48,9 @@ erDiagram
     }
 
     SERVICE_REQUESTS {
-        UUID request_id PK
-        UUID location_id FK
-        UUID job_id FK
+        int8 request_id PK
+        int8 location_id FK
+        int8 job_id FK
         string request_type "SKIP|EXTRA"
         datetime requested_for_date
         datetime created_at
@@ -58,7 +58,7 @@ erDiagram
     }
 
     USERS {
-        UUID id PK
+        int8 id PK
         string role "driver|customer"
     }
 
