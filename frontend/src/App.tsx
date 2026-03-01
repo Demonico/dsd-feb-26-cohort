@@ -64,7 +64,7 @@ function AppRoutes() {
               element={
                 user ? (
                   user.role == "driver" ? (
-                    <Navigate to="/driver" />
+                    <Navigate to="/dashboard" />
                   ) : (
                     <Navigate to="/customer" />
                   )
@@ -81,7 +81,17 @@ function AppRoutes() {
 
             <Route
               path="/dashboard"
-              element={user ? <Dashboard /> : <Navigate to="/login" replace />}
+              element={
+                user ? (
+                  user.role === "driver" ? (
+                   <Dashboard/>
+                  ) : (
+                    <Navigate to="/customer" replace />
+                  )
+                ) : (
+                  <Navigate to="/login" replace />
+                )
+              }
             />
 
             <Route

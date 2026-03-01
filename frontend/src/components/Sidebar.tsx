@@ -19,7 +19,7 @@ const Sidebar = ({ items, user, onLogout ,expand,setExpand}: SidebarProps) => {
 
   const allowedPathsByRole: Record<string, string[]> = {
     driver: ["/dashboard", "/driver"],
-    customer: ["/dashboard", "/customer"],
+    customer: ["/dashboard"],
   };
 
   const visibleItems = user?.role
