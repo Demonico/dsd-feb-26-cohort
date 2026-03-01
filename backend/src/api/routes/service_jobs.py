@@ -1,6 +1,5 @@
 from datetime import datetime
 from typing import Literal
-from uuid import UUID
 
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
@@ -22,7 +21,7 @@ class UpdateServiceJobMetadataPayload(BaseModel):
 
 @router.patch("/{job_id}/metadata")
 async def patch_service_job_metadata(
-    job_id: UUID,
+    job_id: int,
     payload: UpdateServiceJobMetadataPayload,
     _user: dict = Depends(require_role("driver")),
 ) -> dict:

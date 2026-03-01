@@ -19,9 +19,16 @@ src/api/routes/distance.py
 src/api/routes/drivers.py
 src/api/routes/garbage_routes.py
 src/api/routes/health.py
+src/api/routes/pullserviceloc.py
+src/api/routes/service_jobs.py
+src/api/routes/uploads.py
 src/model/table.py
 src/services/customer_requests_service.py
 src/services/customers_service.py
 src/services/distance_service.py
 src/services/driver_service.py
 src/services/garbage_routes_service.py
+src/services/distance_service.py
+src/services/driver_service.py
+src/services/pullserviceloc_service.py
+src/services/service_jobs_service.py
