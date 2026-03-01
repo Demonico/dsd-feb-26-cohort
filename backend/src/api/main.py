@@ -9,6 +9,7 @@ from .routes.customers import router as customers_router
 from .routes.health import router as health_router
 from .routes.service_jobs import router as service_jobs_router
 from .routes.pullserviceloc import router as pullserviceloc_router
+from .routes.uploads import router as uploads_router
 
 app = FastAPI()
 
@@ -28,3 +29,4 @@ app.include_router(drivers_router)
 app.include_router(customers_router)
 app.include_router(service_jobs_router)
 app.include_router(pullserviceloc_router)
+app.include_router(uploads_router)
