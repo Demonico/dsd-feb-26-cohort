@@ -2,6 +2,7 @@ import type { CustomerLocation, ServiceJob } from "@/types/customer";
 import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 
 type LocationCardProps = {
@@ -12,7 +13,6 @@ type LocationCardProps = {
 
 const LocationCard = ({ location, serviceJob }: LocationCardProps) => {
   const [selectedServiceType, setSelectedServiceType] = useState<string | null>(serviceJob.serviceType ?? null);
-  const [isEditing, setIsEditing] = useState(false);
 
 
   const handleSubmit = async () => {
@@ -37,43 +37,38 @@ const LocationCard = ({ location, serviceJob }: LocationCardProps) => {
               <p className="text-sm font-semibold">{location.street}, {location.city}, {location.state} {location.zip}</p>
             </div>
           </div>
-          {serviceJob.serviceType && serviceJob.requestFormOpen && !isEditing && (
-            <button
-              className="text-sm cursor-pointer hover:underline"
-              onClick={() => {
-                setIsEditing(true);
-                setSelectedServiceType(null);
-              }}
-            >
-              Edit
-            </button>
-          )}
         </div>
+
         <div className="flex items-center gap-2">
           <span className={`w-4 h-4 rounded-full ${serviceJob.requestFormOpen ? "bg-green-500" : "bg-red-500"}`} />
           <span className="text-sm font-semibold">
             {serviceJob.requestFormOpen ? "REQUEST FORM OPEN" : "REQUEST FORM CLOSE"}
           </span>
         </div>
+
         <p className="text-sm"><span className="font-semibold">Scheduled Pickup:</span> {serviceJob.scheduledPickup}</p>
         <div className="flex flex-col gap-2 mt-2">
           <p className="text-sm"><span className="font-semibold">Container:</span> {serviceJob.container}</p>
           <p className="text-sm font-semibold">Service Type:</p>
-          {["normal_pickup", "extra_pickup", "skip_pickup"].map((type) => (
-            <label key={type} className="flex items-center gap-2 text-sm capitalize">
-              <input
-                type="radio"
-                name="serviceType"
-                value={type}
-                checked={selectedServiceType === type}
-                onChange={() => setSelectedServiceType(type)}
-                disabled={!serviceJob.requestFormOpen || (!!serviceJob.serviceType && !isEditing)}
-              />
-              {type.replace("_", " ")}
-            </label>
-          ))}
+
+          <Select
+            disabled={!serviceJob.requestFormOpen}
+            value={selectedServiceType ?? ""}
+            onValueChange={(val) => setSelectedServiceType(val)}
+          >
+            <SelectTrigger className="w-40 cursor-pointer">
+              <SelectValue placeholder="Select service type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="normal_pickup">Normal Pickup</SelectItem>
+              <SelectItem value="extra_pickup">Extra Pickup</SelectItem>
+              <SelectItem value="skip_pickup">Skip Pickup</SelectItem>
+            </SelectContent>
+          </Select>
+
         </div>
-        <Button onClick={handleSubmit} disabled={!serviceJob.requestFormOpen} className={`w-full ${!serviceJob.requestFormOpen ? "bg-gray-300 text-gray-500" : "bg-green-700 text-white"} cursor-pointer`} variant="ghost">
+
+        <Button onClick={handleSubmit} disabled={!serviceJob.requestFormOpen || !selectedServiceType} className={`w-full ${!serviceJob.requestFormOpen ? "bg-gray-300 text-gray-500" : "bg-green-700 text-white"} cursor-pointer`} variant="ghost">
           SUBMIT
         </Button>
 
