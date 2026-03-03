@@ -1,8 +1,7 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 import logo from "../../assets/image.jpeg";
 import driverPic from "../../assets/Garbage_Men.jpeg";
 import customerPic from "../../assets/Customer.jpeg";
-// import type { FormEvent } from "react";
 import type { Role } from "../../types/auth";
 
 type AuthPageProps = {

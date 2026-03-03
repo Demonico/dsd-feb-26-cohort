@@ -1,6 +1,8 @@
+import DriverDashboard from "@/components/DriverDashboard";
+
 const Dashboard = () => {
   return (
-    <div>Dashboard</div>
+    <DriverDashboard />
   )
 }
 

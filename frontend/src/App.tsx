@@ -32,7 +32,7 @@ function RoleGuard({ user, allowed, children }: RoleGuardProps) {
 }
 
 function AppRoutes() {
-  const { user, hydrating, loading, error, notice, login, signup, logout } =
+  const { user, hydrating, loading, login, signup, logout } =
     useAuth();
   const location = useLocation();
   const showSidebar = Boolean(user) && location.pathname !== "/login";

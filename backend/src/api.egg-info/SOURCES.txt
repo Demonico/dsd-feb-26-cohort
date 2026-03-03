@@ -28,7 +28,5 @@ src/services/customers_service.py
 src/services/distance_service.py
 src/services/driver_service.py
 src/services/garbage_routes_service.py
-src/services/distance_service.py
-src/services/driver_service.py
 src/services/pullserviceloc_service.py
 src/services/service_jobs_service.py
