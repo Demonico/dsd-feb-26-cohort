@@ -1,4 +1,5 @@
-import { useMemo, useState, type SyntheticEvent } from "react";
+import { useMemo } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { Link } from "react-router-dom";
 
 import type { Role } from "@/types/auth";
@@ -21,55 +22,72 @@ const defaultCustomerForm = {
   zipcode: "",
 };
 
+type SignupFormValues = {
+  role: Role;
+  email: string;
+  password: string;
+  driver_name: string;
+} & typeof defaultCustomerForm;
+
 export default function SignupPage({
   loading,
   error,
   notice,
   onSignup,
 }: SignupPageProps) {
-  const [role, setRole] = useState<Role>("customer");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [driverName, setDriverName] = useState("");
-  const [customerForm, setCustomerForm] = useState(defaultCustomerForm);
+  const { register, control, setValue, handleSubmit } = useForm<SignupFormValues>({
+    defaultValues: {
+      role: "customer",
+      email: "",
+      password: "",
+      driver_name: "",
+      ...defaultCustomerForm,
+    },
+  });
+  const values = useWatch({ control });
+  const role = values.role ?? "customer";
 
   const canSubmit = useMemo(() => {
-    if (!email.trim() || !password.trim()) {
+    if (!values.email?.trim() || !values.password?.trim()) {
       return false;
     }
 
     if (role === "driver") {
-      return Boolean(driverName.trim());
+      return Boolean(values.driver_name?.trim());
     }
 
     return Boolean(
-      customerForm.customer_name.trim() &&
-        customerForm.phone_number.trim() &&
-        customerForm.street_address.trim() &&
-        customerForm.city.trim() &&
-        customerForm.state.trim() &&
-        customerForm.zipcode.trim(),
+      values.customer_name?.trim() &&
+        values.phone_number?.trim() &&
+        values.street_address?.trim() &&
+        values.city?.trim() &&
+        values.state?.trim() &&
+        values.zipcode?.trim(),
     );
-  }, [customerForm, driverName, email, password, role]);
+  }, [role, values]);
 
-  async function handleSubmit(event: SyntheticEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    if (role === "driver") {
+  async function onSubmit(formData: SignupFormValues) {
+    if (formData.role === "driver") {
       await onSignup({
-        role,
-        email,
-        password,
-        driver_name: driverName,
+        role: "driver",
+        email: formData.email,
+        password: formData.password,
+        driver_name: formData.driver_name,
       });
       return;
     }
 
     await onSignup({
-      role,
-      email,
-      password,
-      ...customerForm,
+      role: "customer",
+      email: formData.email,
+      password: formData.password,
+      customer_name: formData.customer_name,
+      billing_address: formData.billing_address,
+      phone_number: formData.phone_number,
+      street_address: formData.street_address,
+      city: formData.city,
+      state: formData.state,
+      zipcode: formData.zipcode,
     });
   }
 
@@ -89,7 +107,7 @@ export default function SignupPage({
                 ? "bg-[#005B17] text-white border-[#005B17]"
                 : "bg-white border-slate-300"
             }`}
-            onClick={() => setRole("customer")}
+            onClick={() => setValue("role", "customer")}
           >
             Customer
           </button>
@@ -100,20 +118,20 @@ export default function SignupPage({
                 ? "bg-[#005B17] text-white border-[#005B17]"
                 : "bg-white border-slate-300"
             }`}
-            onClick={() => setRole("driver")}
+            onClick={() => setValue("role", "driver")}
           >
             Driver
           </button>
         </div>
 
-        <form className="mt-6 space-y-4" onSubmit={handleSubmit}>
+        <form className="mt-6 space-y-4" onSubmit={handleSubmit(onSubmit)}>
+          <input type="hidden" {...register("role")} />
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <label className="flex flex-col gap-1 text-sm">
               Email
               <input
                 type="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                {...register("email")}
                 className="border rounded-md px-3 py-2"
                 required
               />
@@ -122,8 +140,7 @@ export default function SignupPage({
               Password
               <input
                 type="password"
-                value={password}
-                onChange={(event) => setPassword(event.target.value)}
+                {...register("password")}
                 className="border rounded-md px-3 py-2"
                 minLength={6}
                 required
@@ -135,8 +152,7 @@ export default function SignupPage({
             <label className="flex flex-col gap-1 text-sm">
               Driver name
               <input
-                value={driverName}
-                onChange={(event) => setDriverName(event.target.value)}
+                {...register("driver_name")}
                 className="border rounded-md px-3 py-2"
                 required
               />
@@ -146,13 +162,7 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm">
                 Customer name
                 <input
-                  value={customerForm.customer_name}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({
-                      ...current,
-                      customer_name: event.target.value,
-                    }))
-                  }
+                  {...register("customer_name")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
@@ -160,13 +170,7 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm">
                 Phone number
                 <input
-                  value={customerForm.phone_number}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({
-                      ...current,
-                      phone_number: event.target.value,
-                    }))
-                  }
+                  {...register("phone_number")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
@@ -174,26 +178,14 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm md:col-span-2">
                 Billing address (optional)
                 <input
-                  value={customerForm.billing_address}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({
-                      ...current,
-                      billing_address: event.target.value,
-                    }))
-                  }
+                  {...register("billing_address")}
                   className="border rounded-md px-3 py-2"
                 />
               </label>
               <label className="flex flex-col gap-1 text-sm md:col-span-2">
                 Street address
                 <input
-                  value={customerForm.street_address}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({
-                      ...current,
-                      street_address: event.target.value,
-                    }))
-                  }
+                  {...register("street_address")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
@@ -201,10 +193,7 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm">
                 City
                 <input
-                  value={customerForm.city}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({ ...current, city: event.target.value }))
-                  }
+                  {...register("city")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
@@ -212,10 +201,7 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm">
                 State
                 <input
-                  value={customerForm.state}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({ ...current, state: event.target.value }))
-                  }
+                  {...register("state")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
@@ -223,10 +209,7 @@ export default function SignupPage({
               <label className="flex flex-col gap-1 text-sm md:col-span-2">
                 Zip code
                 <input
-                  value={customerForm.zipcode}
-                  onChange={(event) =>
-                    setCustomerForm((current) => ({ ...current, zipcode: event.target.value }))
-                  }
+                  {...register("zipcode")}
                   className="border rounded-md px-3 py-2"
                   required
                 />
