@@ -35,7 +35,7 @@ class Customer(SQLModel, table=True):
     user_id: int = Field(foreign_key="users.id", unique=True, index=True)
     customer_name: str
     billing_address: str
-    phone : str
+    phone_number: str
 
 class Location(SQLModel, table=True):
     __tablename__ = "service_locations"
@@ -48,6 +48,7 @@ class Location(SQLModel, table=True):
     city : str
     zipcode : str
     state : str
+    day_of_service: str
 
 class Driver(SQLModel, table=True):
     __tablename__ = "drivers"
