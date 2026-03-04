@@ -19,6 +19,10 @@ type RoleGuardProps = {
   children: ReactNode;
 };
 
+function roleHomePath(role: User["role"]) {
+  return role === "driver" ? "/dashboard" : "/customer";
+}
+
 function RoleGuard({ user, allowed, children }: RoleGuardProps) {
   if (!user) return <Navigate to="/login" replace />;
   if (user.role !== allowed) return <div>Forbidden</div>;
@@ -40,6 +44,29 @@ function AppRoutes() {
   const showSidebar =
     Boolean(user) && location.pathname !== "/login" && location.pathname !== "/signup";
   const [expand, setExpand] = useState(true);
+
+  const loginElement = user ? (
+    <Navigate to={roleHomePath(user.role)} />
+  ) : (
+    <AuthPage loading={loading} error={error} notice={notice} onLogin={login} />
+  );
+
+  const signupElement = user ? (
+    <Navigate to={roleHomePath(user.role)} replace />
+  ) : (
+    <SignupPage
+      loading={loading}
+      error={error}
+      notice={notice}
+      onSignup={signupWithProfile}
+    />
+  );
+
+  let dashboardElement: ReactNode = <Navigate to="/login" replace />;
+  if (user) {
+    dashboardElement =
+      user.role === "driver" ? <Dashboard /> : <Navigate to="/customer" replace />;
+  }
 
   return (
     <main className={showSidebar ? "flex-1 min-h-screen" : "app-shell"}>
@@ -63,60 +90,9 @@ function AppRoutes() {
           <p>Restoring session...</p>
         ) : (
           <Routes>
-            <Route
-              path="/login"
-              element={
-                user ? (
-                  user.role === "driver" ? (
-                    <Navigate to="/dashboard" />
-                  ) : (
-                    <Navigate to="/customer" />
-                  )
-                ) : (
-                  <AuthPage
-                    loading={loading}
-                    error={error}
-                    notice={notice}
-                    onLogin={login}
-                  />
-                )
-              }
-            />
-
-            <Route
-              path="/signup"
-              element={
-                user ? (
-                  user.role === "driver" ? (
-                    <Navigate to="/dashboard" replace />
-                  ) : (
-                    <Navigate to="/customer" replace />
-                  )
-                ) : (
-                  <SignupPage
-                    loading={loading}
-                    error={error}
-                    notice={notice}
-                    onSignup={signupWithProfile}
-                  />
-                )
-              }
-            />
-
-            <Route
-              path="/dashboard"
-              element={
-                user ? (
-                  user.role === "driver" ? (
-                    <Dashboard />
-                  ) : (
-                    <Navigate to="/customer" replace />
-                  )
-                ) : (
-                  <Navigate to="/login" replace />
-                )
-              }
-            />
+            <Route path="/login" element={loginElement} />
+            <Route path="/signup" element={signupElement} />
+            <Route path="/dashboard" element={dashboardElement} />
 
             <Route
               path="/driver"
