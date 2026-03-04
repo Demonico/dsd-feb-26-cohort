@@ -5,7 +5,7 @@ erDiagram
         int8 user_id FK
         string customer_name
         string billing_address
-        string phone
+        string phone_number
     }
 
     SERVICE_LOCATIONS {
@@ -17,6 +17,7 @@ erDiagram
         str city
         str zipcode
         str state
+        string day_of_service "MON|TUE|WED|THU|FRI|SAT|SUN"
     }
 
     DRIVERS {
