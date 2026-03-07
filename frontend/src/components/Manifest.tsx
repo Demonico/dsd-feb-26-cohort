@@ -1,26 +1,26 @@
-    import { useEffect, useState } from "react";
-    import { mockManifestData } from "@/assets/mockData";
+    import { useMemo, useState } from "react";
+    import type { DriverManifestJob } from "@/api/driverManifest";
 
-    const Manifest = () => {
+    type ManifestProps = {
+        jobs: DriverManifestJob[];
+    };
+
+    const Manifest = ({ jobs }: ManifestProps) => {
 
         const [currentPage, setCurrentPage] = useState(1);
         const itemsInPage = 10;
 
-        const totalPages = Math.ceil(mockManifestData.length / itemsInPage);
-        const currItems = mockManifestData.slice((currentPage - 1) * itemsInPage, currentPage * itemsInPage);
+        const totalPages = Math.max(1, Math.ceil(jobs.length / itemsInPage));
+        const currItems = useMemo(
+            () => jobs.slice((currentPage - 1) * itemsInPage, currentPage * itemsInPage),
+            [currentPage, jobs],
+        );
 
 
         const pageNumbers = [];
         for (let i = 1; i <= totalPages; i++) {
             pageNumbers.push(i);
         }
-
-
-        useEffect(() => {
-
-            // will call api
-
-        }, []);
 
         return (
             <div className="border rounded-sm mt-2 overflow-x-auto">
@@ -38,18 +38,25 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {currItems.length === 0 ? (
+                            <tr>
+                                <td colSpan={7} className="p-4 text-center text-muted-foreground">
+                                    No jobs assigned.
+                                </td>
+                            </tr>
+                        ) : null}
                         {currItems.map((row) => (
-                            <tr key={row.id}>
-                                <td className="p-2">{row.id}</td>
-                                <td className="p-2">{row.locationLine1}</td>
-                                <td className="p-2">{row.locationLine2}</td>
-                                <td className="p-2">{row.customer}</td>
-                                <td className="p-2">{row.container}</td>
-                                <td className="p-2">{row.size}</td>
+                            <tr key={row.job_id}>
+                                <td className="p-2">{row.job_id}</td>
+                                <td className="p-2">{row.address?.street_address ?? "N/A"}</td>
+                                <td className="p-2">{row.customer_name ?? "N/A"}</td>
+                                <td className="p-2">{row.job_source}</td>
+                                <td className="p-2">Mixed</td>
+                                <td className="p-2">N/A</td>
                                 <td className="p-2">
-                                    <span className={`inline-flex justify-center items-center w-24 px-2 py-1 rounded-xl font-medium ${row.status === "Completed"
+                                    <span className={`inline-flex justify-center items-center w-24 px-2 py-1 rounded-xl font-medium ${row.status === "COMPLETED"
                                         ? "bg-green-100 text-green-600"
-                                        : row.status === "Skipped"
+                                        : row.status === "SKIPPED"
                                             ? "bg-red-100 text-red-600"
                                             : "bg-gray-100 text-gray-600"} p-1`}>
                                         {row.status}
