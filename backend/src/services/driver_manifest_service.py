@@ -366,6 +366,17 @@ def get_driver_manifest_for_date(user_id: str, service_date: date) -> dict:
             "extra_count": extra_count,
         }
 
+    existing_jobs = _get_jobs_by_route(route["route_id"])
+    locations, job_sources = _locations_for_route(service_date)
+    if locations:
+        ordered_location_ids = _optimized_location_order(route, locations)
+        _sync_jobs_for_route(
+            route_id=route["route_id"],
+            existing_jobs=existing_jobs,
+            ordered_location_ids=ordered_location_ids,
+            job_sources=job_sources,
+        )
+
     jobs = _get_jobs_by_route(route["route_id"])
     enriched_jobs = _build_enriched_jobs(jobs)
     return {
