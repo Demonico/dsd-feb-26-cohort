@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from api.supabase_client import supabase, supabase_admin
+from src.api.supabase_client import supabase, supabase_admin
 
 
 def list_service_jobs_by_location(location_id: int) -> list[dict]:

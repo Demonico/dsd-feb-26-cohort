@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from api.supabase_client import supabase, supabase_admin
+from src.api.supabase_client import supabase, supabase_admin
 
 
 def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[str, Any]:
