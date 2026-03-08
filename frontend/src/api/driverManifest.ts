@@ -42,14 +42,57 @@ export type DriverManifestResponse = {
   };
 };
 
+const MANIFEST_CACHE_PREFIX = "driver_manifest:";
+const MANIFEST_CACHE_TTL_MS = 30_000;
+const inFlightByDate = new Map<string, Promise<DriverManifestResponse>>();
+
+function cacheKey(serviceDate: string): string {
+  return `${MANIFEST_CACHE_PREFIX}${serviceDate}`;
+}
+
+function readCache(serviceDate: string): DriverManifestResponse | null {
+  try {
+    const raw = sessionStorage.getItem(cacheKey(serviceDate));
+    if (!raw) return null;
+    const parsed = JSON.parse(raw) as { ts: number; data: DriverManifestResponse };
+    if (Date.now() - parsed.ts > MANIFEST_CACHE_TTL_MS) return null;
+    return parsed.data;
+  } catch {
+    return null;
+  }
+}
+
+function writeCache(serviceDate: string, data: DriverManifestResponse): void {
+  try {
+    sessionStorage.setItem(cacheKey(serviceDate), JSON.stringify({ ts: Date.now(), data }));
+  } catch {
+    // Ignore cache write errors.
+  }
+}
+
 export async function fetchDriverManifest(
   serviceDate: string,
 ): Promise<DriverManifestResponse> {
-  const response = await http.get<DriverManifestResponse>(
-    "/driver/manifest/",
-    { params: { service_date: serviceDate } },
-  );
-  return response.data;
+  const cached = readCache(serviceDate);
+  if (cached) return cached;
+
+  const inFlight = inFlightByDate.get(serviceDate);
+  if (inFlight) return inFlight;
+
+  const request = http
+    .get<DriverManifestResponse>("/driver/manifest/", {
+      params: { service_date: serviceDate },
+    })
+    .then((response) => {
+      writeCache(serviceDate, response.data);
+      return response.data;
+    })
+    .finally(() => {
+      inFlightByDate.delete(serviceDate);
+    });
+
+  inFlightByDate.set(serviceDate, request);
+  return request;
 }
 
 export async function generateDriverManifest(
@@ -59,5 +102,6 @@ export async function generateDriverManifest(
     "/driver/manifest/generate",
     { service_date: serviceDate },
   );
+  writeCache(serviceDate, response.data);
   return response.data;
 }
