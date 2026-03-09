@@ -158,13 +158,6 @@ def _locations_for_route(service_date: date) -> tuple[list[dict], dict[int, str]
     return selected, job_sources
 
 
-def _request_counts_for_day(service_date: date) -> tuple[int, int]:
-    overrides = _resolve_location_overrides(service_date)
-    skip_count = sum(1 for request_type in overrides.values() if request_type == "SKIP")
-    extra_count = sum(1 for request_type in overrides.values() if request_type == "EXTRA")
-    return skip_count, extra_count
-
-
 def _format_address(location: dict) -> str | None:
     street = (location.get("street_address") or "").strip()
     city = (location.get("city") or "").strip()
@@ -353,7 +346,6 @@ def _sync_jobs_for_route(
 
 def get_driver_manifest_for_date(user_id: str, service_date: date) -> dict:
     driver = _get_driver_by_user_id(user_id)
-    skip_count, extra_count = _request_counts_for_day(service_date)
     route = _get_route_for_day(driver["driver_id"], service_date)
     if route is None:
         return {
@@ -362,23 +354,14 @@ def get_driver_manifest_for_date(user_id: str, service_date: date) -> dict:
             "route": None,
             "jobs": [],
             "has_jobs": False,
-            "skip_count": skip_count,
-            "extra_count": extra_count,
+            "skip_count": 0,
+            "extra_count": 0,
         }
-
-    existing_jobs = _get_jobs_by_route(route["route_id"])
-    locations, job_sources = _locations_for_route(service_date)
-    if locations:
-        ordered_location_ids = _optimized_location_order(route, locations)
-        _sync_jobs_for_route(
-            route_id=route["route_id"],
-            existing_jobs=existing_jobs,
-            ordered_location_ids=ordered_location_ids,
-            job_sources=job_sources,
-        )
 
     jobs = _get_jobs_by_route(route["route_id"])
     enriched_jobs = _build_enriched_jobs(jobs)
+    skip_count = sum(1 for job in enriched_jobs if job.get("status") == "SKIPPED")
+    extra_count = sum(1 for job in enriched_jobs if job.get("job_source") == "EXTRA_REQUEST")
     return {
         "service_date": service_date.isoformat(),
         "driver": driver,
