@@ -203,7 +203,6 @@ def _optimized_location_order(route: dict, locations: list[dict]) -> list[int]:
         location_ids.append(location["location_id"])
 
     try:
-        # Lazy import so app startup is not coupled to API_KEY availability.
         from src.services.distance_service import optimize_distance
 
         optimized = optimize_distance(origin=origin, destinations=destinations)
