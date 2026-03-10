@@ -1,4 +1,4 @@
-from api.supabase_client import supabase
+from src.api.supabase_client import supabase
 
 TABLE = "garbage_routes"
 

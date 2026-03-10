@@ -1,6 +1,12 @@
 import { Input } from "@/components/ui/input"
 
-const ManifestDetails = ({stops=28,skips =4,extras=28}) => {
+type ManifestDetailsProps = {
+  stops?: number;
+  skips?: number;
+  extras?: number;
+};
+
+const ManifestDetails = ({stops=0,skips =0,extras=0}: ManifestDetailsProps) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center gap-2 w-full justify-between">
          <Input type="search" placeholder="Search address or customer.." className="w-full md:w-1/2 py-4 placeholder:font-semibold placeholder:text-black" />

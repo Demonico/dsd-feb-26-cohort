@@ -1,7 +1,7 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
 from uuid import uuid4
 from ..auth.dependencies import require_role
-from api.supabase_client import supabase_admin
+from src.api.supabase_client import supabase_admin
 
 router = APIRouter(
     prefix="/uploads",
