@@ -43,12 +43,9 @@ const StopCard = ({ stop }: StopCardProps) => {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 gap-2 text-sm font-semibold sm:grid-cols-2">
+        <div className="grid grid-cols-1 gap-2 text-sm font-semibold">
           <p>
             Service: <span className="font-bold">{stop.service}</span>
-          </p>
-          <p>
-            Container: <span className="font-bold">{stop.container}</span>
           </p>
         </div>
 

@@ -86,20 +86,24 @@ const Sidebar = ({ items, user, onLogout, expand, setExpand }: SidebarProps) => 
           })}
         </ul>
 
-        <div className="border-t flex p-2 items-center gap-2 justify-between">
-          <div className={`flex items-center gap-2 `}>
+        <div className="border-t flex p-2 items-center justify-between overflow-hidden">
+          <div
+            className={`flex items-center gap-2 overflow-hidden ${expand ? "" : "justify-center w-full"}`}
+          >
             <CircleUser size={33} />
             <div
               className={`overflow-hidden transition-all ${expand ? "w-30 ml-1" : "w-0"}`}
             >
-              <h2 className="font-semibold">{user?.email?.split("@")[0] ?? "Guest"}</h2>
-              <p className="text-xs">{user?.role ?? "—"}</p>
+              <h2 className="font-semibold truncate">
+                {user?.email?.split("@")[0] ?? "Guest"}
+              </h2>
+              <p className="text-xs truncate">{user?.role ?? "—"}</p>
             </div>
           </div>
           <button
             type="button"
             onClick={onLogout}
-            className="cursor-pointer hover:bg-gray-300 rounded-xl p-1"
+            className="cursor-pointer hover:bg-gray-300 rounded-xl p-1 shrink-0"
             title="Logout"
           >
             <LogOut size={24} />

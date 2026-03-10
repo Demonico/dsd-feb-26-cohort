@@ -1,5 +1,5 @@
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 
 import { AuthPage } from "./components/auth/AuthPage";
@@ -51,6 +51,27 @@ function AppRoutes() {
     location.pathname !== "/forgot-password" &&
     location.pathname !== "/reset-password";
   const [expand, setExpand] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const lastDesktopExpand = useRef(true);
+
+  useEffect(() => {
+    if (!isMobile) {
+      lastDesktopExpand.current = expand;
+    }
+  }, [expand, isMobile]);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    const handleChange = () => {
+      const matches = mediaQuery.matches;
+      setIsMobile(matches);
+      setExpand(matches ? false : lastDesktopExpand.current);
+    };
+
+    handleChange();
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   const loginElement = user ? (
     <Navigate to={roleHomePath(user.role)} />
