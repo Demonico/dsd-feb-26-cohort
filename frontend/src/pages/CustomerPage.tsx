@@ -12,19 +12,12 @@ import {
 } from "@/api/customerServiceJobs";
 import type {
   Customer,
+  CustomerLocation,
   CustomerServiceJobApi,
   ServiceHistoryEntry,
   ServiceJob,
   UpdateCustomerServiceJobPayload,
 } from "@/types/customer";
-
-const DEFAULT_LOCATION = {
-  name: "Service Location",
-  street: "Address unavailable",
-  city: "Customer",
-  state: "Portal",
-  zip: "",
-};
 
 function formatDisplayDate(value?: string | null): string {
   if (!value) return "Not scheduled";
@@ -70,9 +63,19 @@ function buildCurrentServiceJob(job: CustomerServiceJobApi | null): ServiceJob {
     status: mapStatus(job.status),
     service: job.job_source === "EXTRA_REQUEST" ? "Extra Pickup" : "Scheduled",
     stopOrder: job.sequence_order ?? 0,
-    scheduledPickup: "Not provided by API",
+    scheduledPickup: formatDisplayDate(job.requested_for_date),
     requestFormOpen: job.status === "PENDING" || job.status === "SKIPPED",
     serviceType: mapServiceType(job),
+  };
+}
+
+function buildLocation(job: CustomerServiceJobApi | null): CustomerLocation {
+  return {
+    name: "Service Location",
+    street: job?.address?.street_address ?? "Address unavailable",
+    city: job?.address?.city ?? "",
+    state: job?.address?.state ?? "",
+    zip: job?.address?.zipcode ?? "",
   };
 }
 
@@ -97,13 +100,18 @@ function buildCustomerViewModel(jobs: CustomerServiceJobApi[]): Customer {
     id: "current-customer",
     name: "Customer",
     role: "customer",
-    location: DEFAULT_LOCATION,
+    location: buildLocation(currentJob),
     serviceJob: buildCurrentServiceJob(currentJob),
     serviceIssues: jobs
       .filter((job) => job.status === "FAILED" && job.failure_reason)
       .map((job) => job.failure_reason as string),
     serviceHistory: buildServiceHistory(jobs),
   };
+}
+
+function formatLocationLabel(location: CustomerLocation): string {
+  const parts = [location.city, location.state].filter(Boolean);
+  return parts.length > 0 ? parts.join(", ") : location.street;
 }
 
 function buildPatchPayload(
@@ -198,7 +206,7 @@ const CustomerPage = () => {
 
   return (
     <div className="p-6">
-      <CustomerHeader location="Service Jobs" />
+      <CustomerHeader location={formatLocationLabel(customer.location)} />
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-stretch">
         <div className="flex flex-col gap-4">

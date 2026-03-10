@@ -41,6 +41,12 @@ export type CustomerServiceJobApi = {
   route_id?: number | null;
   sequence_order?: number | null;
   job_source: ServiceJobSource;
+  address?: {
+    street_address?: string | null;
+    city?: string | null;
+    state?: string | null;
+    zipcode?: string | null;
+  };
   requested_for_date?: string | null;
   completed_at?: string | null;
   status: ServiceJobStatus;

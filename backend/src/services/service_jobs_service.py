@@ -18,6 +18,43 @@ def _request_type_for_job_source(job_source: str | None) -> str | None:
     return None
 
 
+def _attach_location_details(jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not jobs:
+        return []
+
+    location_ids = list({job["location_id"] for job in jobs if job.get("location_id")})
+    if not location_ids:
+        return jobs
+
+    locations_response = (
+        _client()
+        .table("service_locations")
+        .select("location_id,street_address,city,state,zipcode")
+        .in_("location_id", location_ids)
+        .execute()
+    )
+    locations = {
+        row["location_id"]: row for row in (locations_response.data or []) if row.get("location_id")
+    }
+
+    enriched_jobs: list[dict[str, Any]] = []
+    for job in jobs:
+        location = locations.get(job.get("location_id"), {})
+        enriched_jobs.append(
+            {
+                **job,
+                "address": {
+                    "street_address": location.get("street_address"),
+                    "city": location.get("city"),
+                    "state": location.get("state"),
+                    "zipcode": location.get("zipcode"),
+                },
+            }
+        )
+
+    return enriched_jobs
+
+
 def _attach_request_dates(jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
     if not jobs:
         return []
@@ -73,6 +110,10 @@ def _attach_request_dates(jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
     return enriched_jobs
 
 
+def _enrich_customer_jobs(jobs: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    return _attach_request_dates(_attach_location_details(jobs))
+
+
 def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[str, Any]:
     if not updates:
         raise HTTPException(
@@ -125,7 +166,7 @@ def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[st
             detail=f"Service job not found: {job_id}",
         )
 
-    return _attach_request_dates(data)[0]
+    return _enrich_customer_jobs(data)[0]
 
 
 def list_service_jobs_for_customer_user(user_id: str) -> list[dict[str, Any]]:
@@ -167,13 +208,15 @@ def list_service_jobs_for_customer_user(user_id: str) -> list[dict[str, Any]]:
         .execute()
     )
     jobs = jobs_response.data or []
-    return _attach_request_dates(
+    return _enrich_customer_jobs(
         sorted(
-        jobs,
-        key=lambda row: (
-            row.get("sequence_order") is None,
-            row.get("sequence_order") if row.get("sequence_order") is not None else 10**9,
-            row.get("job_id") if row.get("job_id") is not None else 10**9,
-        ),
-    )
+            jobs,
+            key=lambda row: (
+                row.get("sequence_order") is None,
+                row.get("sequence_order")
+                if row.get("sequence_order") is not None
+                else 10**9,
+                row.get("job_id") if row.get("job_id") is not None else 10**9,
+            ),
+        )
     )
