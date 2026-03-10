@@ -1,4 +1,4 @@
-/* API helpers for driver manifest fetch and route generation by service date. */
+/* API helpers for driver manifest fetch by service date. */
 
 import http from "./http";
 
@@ -93,15 +93,4 @@ export async function fetchDriverManifest(
 
   inFlightByDate.set(serviceDate, request);
   return request;
-}
-
-export async function generateDriverManifest(
-  serviceDate: string,
-): Promise<DriverManifestResponse> {
-  const response = await http.post<DriverManifestResponse>(
-    "/driver/manifest/generate",
-    { service_date: serviceDate },
-  );
-  writeCache(serviceDate, response.data);
-  return response.data;
 }

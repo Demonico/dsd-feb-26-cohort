@@ -1,12 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 
-import { Button } from "@/components/ui/button";
 import RouteDetails from "../components/RouteDetails";
 import ManifestDetails from "@/components/ManifestDetails";
 import Manifest from "@/components/Manifest";
 import {
   fetchDriverManifest,
-  generateDriverManifest,
   type DriverManifestResponse,
 } from "@/api/driverManifest";
 
@@ -18,23 +16,8 @@ const DriverManifest = () => {
   const [serviceDate, setServiceDate] = useState(todayIsoDate());
   const [manifest, setManifest] = useState<DriverManifestResponse | null>(null);
   const [loading, setLoading] = useState(false);
-  const [generating, setGenerating] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const lastLoadedDateRef = useRef<string | null>(null);
-
-  async function onGenerateRoute() {
-    setGenerating(true);
-    setError(null);
-    try {
-      const data = await generateDriverManifest(serviceDate);
-      setManifest(data);
-    } catch (e) {
-      const message = e instanceof Error ? e.message : "Failed to generate route";
-      setError(message);
-    } finally {
-      setGenerating(false);
-    }
-  }
 
   async function loadManifest(date: string) {
     setLoading(true);
@@ -77,19 +60,6 @@ const DriverManifest = () => {
             onChange={(event) => setServiceDate(event.target.value)}
           />
         </label>
-        <Button
-          type="button"
-          onClick={() => {
-            void onGenerateRoute();
-          }}
-          disabled={generating || loading}
-        >
-          {generating
-            ? "Generating..."
-            : manifest?.has_jobs
-              ? "Regenerate Route"
-              : "Generate Route"}
-        </Button>
       </div>
 
       {error ? <p className="text-sm text-red-600">{error}</p> : null}
