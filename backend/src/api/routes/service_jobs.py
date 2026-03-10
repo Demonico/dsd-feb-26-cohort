@@ -5,7 +5,10 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
 from ..auth.dependencies import require_role
-from src.services.service_jobs_service import update_service_job_metadata
+from src.services.service_jobs_service import (
+    list_service_jobs_for_customer_user,
+    update_service_job_metadata,
+)
 
 router = APIRouter(prefix="/service-jobs", tags=["service-jobs"])
 
@@ -17,6 +20,14 @@ class UpdateServiceJobMetadataPayload(BaseModel):
     status: Literal["PENDING", "COMPLETED", "FAILED", "SKIPPED"] | None = None
     failure_reason: str | None = None
     proof_of_service_photo: str | None = None
+
+
+@router.get("/customer")
+async def read_customer_service_jobs(
+    user: dict = Depends(require_role("customer")),
+) -> dict:
+    service_jobs = list_service_jobs_for_customer_user(user_id=user["id"])
+    return {"service_jobs": service_jobs}
 
 
 @router.patch("/{job_id}/metadata")
