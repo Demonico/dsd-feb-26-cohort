@@ -80,7 +80,7 @@ function buildServiceHistory(
   jobs: CustomerServiceJobApi[],
 ): ServiceHistoryEntry[] {
   return jobs.map((job) => ({
-    date: formatDisplayDate(job.completed_at),
+    date: formatDisplayDate(job.requested_for_date ?? job.completed_at),
     status: job.status,
     notes: job.failure_reason ?? "",
   }));
