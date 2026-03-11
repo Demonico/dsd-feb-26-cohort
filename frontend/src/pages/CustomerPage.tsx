@@ -6,17 +6,13 @@ import LocationCard from "@/components/LocationCard";
 import ServiceStatusCard from "@/components/ServiceStatusCard";
 import ServiceHistoryCard from "@/components/ServiceHistoryCard";
 import ServiceIssuesCard from "@/components/ServiceIssuesCard";
-import {
-  fetchCustomerServiceJobs,
-  patchCustomerServiceJobMetadata,
-} from "@/api/customerServiceJobs";
+import { fetchCustomerServiceJobs } from "@/api/customerServiceJobs";
 import type {
   Customer,
   CustomerLocation,
   CustomerServiceJobApi,
   ServiceHistoryEntry,
   ServiceJob,
-  UpdateCustomerServiceJobPayload,
 } from "@/types/customer";
 
 function formatDisplayDate(value?: string | null): string {
@@ -114,20 +110,6 @@ function formatLocationLabel(location: CustomerLocation): string {
   return parts.length > 0 ? parts.join(", ") : location.street;
 }
 
-function buildPatchPayload(
-  serviceType: ServiceJob["serviceType"],
-): UpdateCustomerServiceJobPayload {
-  if (serviceType === "extra_pickup") {
-    return { job_source: "EXTRA_REQUEST", status: "PENDING" };
-  }
-
-  if (serviceType === "skip_pickup") {
-    return { status: "SKIPPED" };
-  }
-
-  return { job_source: "SCHEDULED", status: "PENDING" };
-}
-
 function extractErrorMessage(error: unknown): string {
   if (isAxiosError<{ detail?: string }>(error)) {
     return error.response?.data?.detail || error.message || "Request failed";
@@ -144,8 +126,6 @@ const CustomerPage = () => {
   const [jobs, setJobs] = useState<CustomerServiceJobApi[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [submitError, setSubmitError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     async function loadCustomerJobs() {
@@ -170,32 +150,6 @@ const CustomerPage = () => {
     [jobs],
   );
 
-  async function handleSubmitServiceType(
-    serviceType: ServiceJob["serviceType"],
-  ) {
-    const jobId = customer.serviceJob.jobId;
-    if (!jobId) return;
-
-    setSubmitting(true);
-    setSubmitError(null);
-
-    try {
-      const updatedJob = await patchCustomerServiceJobMetadata(
-        jobId,
-        buildPatchPayload(serviceType),
-      );
-      setJobs((currentJobs) =>
-        currentJobs.map((job) =>
-          job.job_id === updatedJob.job_id ? updatedJob : job,
-        ),
-      );
-    } catch (submitJobError) {
-      setSubmitError(extractErrorMessage(submitJobError));
-    } finally {
-      setSubmitting(false);
-    }
-  }
-
   if (loading) {
     return <div className="p-6">Loading customer service jobs...</div>;
   }
@@ -210,13 +164,7 @@ const CustomerPage = () => {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 items-stretch">
         <div className="flex flex-col gap-4">
-          <LocationCard
-            location={customer.location}
-            serviceJob={customer.serviceJob}
-            onSubmitServiceType={handleSubmitServiceType}
-            submitting={submitting}
-            submitError={submitError}
-          />
+          <LocationCard location={customer.location} serviceJob={customer.serviceJob} />
           <ServiceHistoryCard serviceHistory={customer.serviceHistory} />
         </div>
         <div className="flex flex-col gap-4">

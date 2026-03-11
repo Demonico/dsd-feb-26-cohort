@@ -3,34 +3,23 @@ import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 type LocationCardProps = {
   location: CustomerLocation;
   serviceJob: ServiceJob;
-  onSubmitServiceType?: (serviceType: ServiceJob["serviceType"]) => Promise<void>;
-  submitting?: boolean;
-  submitError?: string | null;
 };
 
-const LocationCard = ({
-  location,
-  serviceJob,
-  onSubmitServiceType,
-  submitting = false,
-  submitError = null,
-}: LocationCardProps) => {
+const LocationCard = ({ location, serviceJob }: LocationCardProps) => {
   const [selectedServiceType, setSelectedServiceType] = useState<string | null>(serviceJob.serviceType ?? null);
 
-  useEffect(() => {
-    setSelectedServiceType(serviceJob.serviceType ?? null);
-  }, [serviceJob.serviceType]);
-
   const handleSubmit = async () => {
-    if (!selectedServiceType || !serviceJob.requestFormOpen || !onSubmitServiceType) return;
+    if (!selectedServiceType || !serviceJob.requestFormOpen) return;
 
     try {
-      await onSubmitServiceType(selectedServiceType as ServiceJob["serviceType"]);
+
+      // will call the api when ready to submit the form
+      console.log("Submitted:", selectedServiceType);
     } catch (error) {
       console.error("Submit failed:", error);
     }
@@ -60,7 +49,7 @@ const LocationCard = ({
           <p className="text-sm font-semibold">Service Type:</p>
 
           <Select
-            disabled={!serviceJob.requestFormOpen || submitting}
+            disabled={!serviceJob.requestFormOpen}
             value={selectedServiceType ?? ""}
             onValueChange={(val) => setSelectedServiceType(val)}
           >
@@ -76,10 +65,9 @@ const LocationCard = ({
 
         </div>
 
-        <Button onClick={handleSubmit} disabled={!serviceJob.requestFormOpen || !selectedServiceType || submitting} className={`w-full ${!serviceJob.requestFormOpen ? "bg-gray-300 text-gray-500" : "bg-green-700 text-white"} cursor-pointer`} variant="ghost">
-          {submitting ? "SUBMITTING..." : "SUBMIT"}
+        <Button onClick={handleSubmit} disabled={!serviceJob.requestFormOpen || !selectedServiceType} className={`w-full ${!serviceJob.requestFormOpen ? "bg-gray-300 text-gray-500" : "bg-green-700 text-white"} cursor-pointer`} variant="ghost">
+          SUBMIT
         </Button>
-        {submitError ? <p className="text-sm text-red-500">{submitError}</p> : null}
 
 
 
