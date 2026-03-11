@@ -52,7 +52,7 @@ const ServiceStatusCard = ({
 
   let label = "";
   let dotColor = "";
-  let stopOrder = "N/A";
+  let stopOrder: number | string = "N/A";
 
   if (!isSubmitted) {
     label = "Submit Request Form";
@@ -86,10 +86,10 @@ const ServiceStatusCard = ({
           {serviceJob.service ?? "----"}
         </p>
 
-        <p className="text-sm">
+        {/* <p className="text-sm">
           <span className="font-semibold">Container:</span>{" "}
           {serviceJob.container ? `${serviceJob.container} yd` : "----"}
-        </p>
+        </p> */}
 
         <p className="text-sm">
           <span className="font-semibold">Stop Order:</span> {stopOrder}

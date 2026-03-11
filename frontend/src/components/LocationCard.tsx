@@ -14,18 +14,14 @@ import { useState } from "react";
 type LocationCardProps = {
   location: CustomerLocation;
   serviceJob: ServiceJob;
-  selectedContainer: string | null;
-  setSelectedContainer: (val: string | null) => void;
-  selectedServiceType: string | null;
-  setSelectedServiceType: (val: string | null) => void;
+  selectedServiceType: ServiceJob["serviceType"] | null;
+  setSelectedServiceType: (val: ServiceJob["serviceType"] | null) => void;
   onSubmit?: () => void;
 };
 
 const LocationCard = ({
   location,
   serviceJob,
-  selectedContainer,
-  setSelectedContainer,
   selectedServiceType,
   setSelectedServiceType,
   onSubmit,
@@ -34,15 +30,10 @@ const LocationCard = ({
   const [editing, setEditing] = useState(false);
 
   const handleSubmit = async () => {
-    if (
-      !selectedContainer ||
-      !selectedServiceType ||
-      !serviceJob.requestFormOpen
-    )
-      return;
+    if (!selectedServiceType || !serviceJob.requestFormOpen) return;
 
     try {
-      console.log("Submitted:", { selectedContainer, selectedServiceType });
+      console.log("Submitted:", { selectedServiceType });
       setSubmitted(true);
       setEditing(false);
 
@@ -54,7 +45,7 @@ const LocationCard = ({
 
   const canEdit = serviceJob.requestFormOpen && (!submitted || editing);
 
-  const isSubmitEnabled = canEdit && selectedContainer && selectedServiceType;
+  const isSubmitEnabled = canEdit && selectedServiceType;
 
   return (
     <Card>
@@ -107,46 +98,16 @@ const LocationCard = ({
           {serviceJob.scheduledPickup}
         </p>
 
-        {/* Container & Service Type */}
+        {/*Service Type */}
         <div className="flex flex-col mt-2 mb-4 gap-4">
-          {/* Container */}
-          <div>
-            <p className="text-sm font-semibold">Container:</p>
-            {canEdit ? (
-              <Select
-                value={selectedContainer ?? ""}
-                onValueChange={(val) => setSelectedContainer(val)}
-              >
-                <SelectTrigger className="w-[50%] cursor-pointer">
-                  <SelectValue>
-                    {selectedContainer
-                      ? `${selectedContainer}`
-                      : "Select Container Size"}
-                  </SelectValue>
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="6">6 yd</SelectItem>
-                  <SelectItem value="10">10 yd</SelectItem>
-                  <SelectItem value="20">20 yd</SelectItem>
-                  <SelectItem value="30">30 yd</SelectItem>
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="w-40 p-2 bg-gray-100 text-gray-500 rounded-md">
-                {selectedContainer
-                  ? `${selectedContainer} yd`
-                  : "No Container Selected"}
-              </div>
-            )}
-          </div>
-
-          {/* Service Type */}
           <div>
             <p className="text-sm font-semibold">Service Type:</p>
             {canEdit ? (
               <Select
                 value={selectedServiceType ?? ""}
-                onValueChange={(val) => setSelectedServiceType(val)}
+                onValueChange={(val) =>
+                  setSelectedServiceType(val as ServiceJob["serviceType"])
+                }
               >
                 <SelectTrigger className="w-[50%] cursor-pointer">
                   <SelectValue>

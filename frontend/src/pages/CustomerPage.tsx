@@ -3,37 +3,22 @@ import LocationCard from "@/components/LocationCard";
 import ServiceStatusCard from "@/components/ServiceStatusCard";
 import ServiceHistoryCard from "@/components/ServiceHistoryCard";
 import ServiceIssuesCard from "@/components/ServiceIssuesCard";
-import { useEffect, useState } from "react";
-import type { Customer } from "@/types/customer";
+import { useState } from "react";
+import type { Customer, ServiceJob } from "@/types/customer";
 
 import { mockCustomer } from "@/assets/mockCustomer";
 
 const CustomerPage = () => {
-  const [customer, setCustomer] = useState<Customer | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [selectedContainer, setSelectedContainer] = useState<string | null>(
-    null,
-  );
-  const [selectedServiceType, setSelectedServiceType] = useState<string | null>(
-    null,
-  );
+  const [customer] = useState<Customer>(mockCustomer);
+  const [selectedServiceType, setSelectedServiceType] = useState<
+    ServiceJob["serviceType"] | null
+  >(null);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const [submittedContainer, setSubmittedContainer] = useState<string | null>(
-    null,
-  );
   const [submittedServiceType, setSubmittedServiceType] = useState<
-    string | null
+    ServiceJob["serviceType"] | null
   >(null);
 
-  // const isPickupDay =
-  //   new Date().toDateString() ===
-  //   new Date(customer.serviceJob.scheduledPickup).toDateString();
-
-  useEffect(() => {
-    setCustomer(mockCustomer);
-    setLoading(false);
-  }, []);
-  if (loading || !customer) return <div className="p-6">Loading...</div>;
+  if (!customer) return <div className="p-6">Loading...</div>;
 
   return (
     <div className="flex justify-center align-items-center flex-col p-6">
@@ -46,12 +31,9 @@ const CustomerPage = () => {
           <LocationCard
             location={customer.location}
             serviceJob={customer.serviceJob}
-            selectedContainer={selectedContainer}
-            setSelectedContainer={setSelectedContainer}
             selectedServiceType={selectedServiceType}
             setSelectedServiceType={setSelectedServiceType}
             onSubmit={() => {
-              setSubmittedContainer(selectedContainer);
               setSubmittedServiceType(selectedServiceType);
               setIsSubmitted(true);
             }}
@@ -62,7 +44,6 @@ const CustomerPage = () => {
           <ServiceStatusCard
             serviceJob={{
               ...customer.serviceJob,
-              container: submittedContainer ?? customer.serviceJob.container,
               serviceType:
                 submittedServiceType ?? customer.serviceJob.serviceType,
             }}
