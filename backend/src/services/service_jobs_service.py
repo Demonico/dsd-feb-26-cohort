@@ -3,7 +3,7 @@ from typing import Any
 
 from fastapi import HTTPException, status
 
-from api.supabase_client import supabase, supabase_admin
+from src.api.supabase_client import supabase, supabase_admin
 
 
 def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[str, Any]:
@@ -59,3 +59,52 @@ def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[st
         )
 
     return data[0]
+
+
+def list_service_jobs_for_customer_user(user_id: str) -> list[dict[str, Any]]:
+    client = supabase_admin or supabase
+
+    customer_response = (
+        client.table("customers")
+        .select("customer_id")
+        .eq("user_id", user_id)
+        .limit(1)
+        .execute()
+    )
+    customer_rows = customer_response.data or []
+    if not customer_rows:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Customer profile not found for current user",
+        )
+
+    customer_id = customer_rows[0]["customer_id"]
+    locations_response = (
+        client.table("service_locations")
+        .select("location_id")
+        .eq("customer_id", customer_id)
+        .execute()
+    )
+    locations = locations_response.data or []
+    location_ids = [row["location_id"] for row in locations if row.get("location_id")]
+    if not location_ids:
+        return []
+
+    jobs_response = (
+        client.table("service_jobs")
+        .select(
+            "job_id,location_id,route_id,sequence_order,job_source,"
+            "completed_at,status,failure_reason,proof_of_service_photo"
+        )
+        .in_("location_id", location_ids)
+        .execute()
+    )
+    jobs = jobs_response.data or []
+    return sorted(
+        jobs,
+        key=lambda row: (
+            row.get("sequence_order") is None,
+            row.get("sequence_order") if row.get("sequence_order") is not None else 10**9,
+            row.get("job_id") if row.get("job_id") is not None else 10**9,
+        ),
+    )
