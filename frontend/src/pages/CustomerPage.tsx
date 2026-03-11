@@ -23,7 +23,7 @@ const CustomerPage = () => {
       </div>
       <div className="flex flex-col gap-4">
         <ServiceStatusCard serviceJob={customer.serviceJob}/>
-        <ServiceIssuesCard issues={customer.serviceIssues}/>
+        <ServiceIssuesCard />
       </div>
 
 

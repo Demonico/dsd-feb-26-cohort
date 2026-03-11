@@ -13,6 +13,9 @@ def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[st
             detail="At least one metadata field is required",
         )
 
+    if "completed_at" in updates and isinstance(updates["completed_at"], datetime):
+        updates["completed_at"] = updates["completed_at"].isoformat()
+    
     if updates.get("status") == "COMPLETED" and "completed_at" not in updates:
         updates["completed_at"] = datetime.now(timezone.utc).isoformat()
 
@@ -59,6 +62,55 @@ def update_service_job_metadata(job_id: int, updates: dict[str, Any]) -> dict[st
         )
 
     return data[0]
+
+
+def list_service_jobs_for_driver(user_id: str) -> list[dict[str, Any]]:
+    client = supabase_admin or supabase
+
+    try:
+        driver_response = (
+            client.table("drivers")
+            .select("driver_id")
+            .eq("user_id", user_id)
+            .limit(1)
+            .execute()
+        )
+        
+        driver_data = driver_response.data or []
+        if not driver_data:
+            return []
+        
+        driver_id = driver_data[0]["driver_id"]
+        
+        route_response = (
+            client.table("garbage_routes")
+            .select("route_id")
+            .eq("driver_id", driver_id)
+            .execute()
+        )
+        
+        route_data = route_response.data or []
+        if not route_data:
+            return []
+        
+        route_ids = [r["route_id"] for r in route_data]
+        
+        response = (
+            client.table("service_jobs")
+            .select(
+                "job_id,location_id,route_id,sequence_order,job_source,"
+                "completed_at,status,failure_reason,proof_of_service_photo,"
+                "service_locations(street_address,city,state,zipcode,customers(customer_name))"
+            )
+            .in_("route_id", route_ids)
+            .execute()
+        )
+        return response.data or []
+    except Exception as exc:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail=f"Failed to fetch service jobs: {exc}",
+        )
 
 
 def list_service_jobs_for_customer_user(user_id: str) -> list[dict[str, Any]]:

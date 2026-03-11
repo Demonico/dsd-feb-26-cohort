@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import DriverDashHeader from "./DriverDashHeader";
 import StopCard from "./StopCard";
-import RouteHealtCard from "./RouteHealtCard";
+import RouteHealthCard from "./RouteHealthCard";
 import RouteListCard from "./RouteListCard";
 import { fetchManifestJobs, generateDriverManifest, fetchOptimizedRoute, type DriverManifestResponse } from "@/api/driverManifest";
 import type { Stop, Route } from "@/types/driver";
@@ -52,6 +52,8 @@ const DriverDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const loadedRef = useRef(false);  // ← add this
+  const [currentStopIndex, setCurrentStopIndex] = useState(0);
+  const [stops, setStops] = useState<Stop[]>([]);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -111,12 +113,13 @@ const DriverDashboard = () => {
       />
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[2fr_1.4fr]">
         <div className="space-y-4">
-          <StopCard stop={currentStop} />
-          <RouteHealtCard health={route.health} />
+          <StopCard stop={currentStop} onComplete={handleStopComplete} />
+          <RouteHealthCard health={routeHealth} />
         </div>
         <RouteListCard
-          stops={route.stops}
+          stops={stops}
           currentStopLocationId={currentStop.location_id}
+          onStopSelect={handleStopSelect}
         />
       </div>
     </div>
