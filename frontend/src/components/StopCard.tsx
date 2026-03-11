@@ -52,7 +52,7 @@ const StopCard = ({ stop, onComplete }: StopCardProps) => {
         formData.append("file", proofFile);
         formData.append("job_id", stop.job_id.toString());
 
-        const response = await http.post("/uploads/image", formData, {
+        await http.post("/uploads/image", formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
       }
