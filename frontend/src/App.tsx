@@ -13,6 +13,7 @@ import DriverManifest from "./pages/DriverManifest";
 import CustomerPage from "./pages/CustomerPage";
 import Dashboard from "./pages/Dashboard";
 import SignupPage from "./pages/SignupPage";
+import CustomerProofView from "./pages/CustomerProofView";
 import type { User } from "./types/auth";
 
 type RoleGuardProps = {
@@ -133,6 +134,15 @@ function AppRoutes() {
               element={
                 <RoleGuard user={user} allowed="customer">
                   <CustomerPage />
+                </RoleGuard>
+              }
+            />
+
+            <Route
+              path="/proof"
+              element={
+                <RoleGuard user={user} allowed="customer">
+                  <CustomerProofView />
                 </RoleGuard>
               }
             />

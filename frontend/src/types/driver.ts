@@ -1,6 +1,7 @@
 export type StopStatus = "PENDING" | "COMPLETED" | "FAILED" | "SKIPPED";
 
 export type Stop = {
+  job_id: number;
   location_id: number;
   sequence_order: number;
   customer_name: string;

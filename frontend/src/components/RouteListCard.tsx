@@ -5,9 +5,10 @@ import type { Stop } from "@/types/driver";
 type RouteListCardProps = {
   stops: Stop[];
   currentStopLocationId: number | null;
+  onStopSelect?: (locationId: number) => void;
 };
 
-const RouteListCard = ({ stops, currentStopLocationId }: RouteListCardProps) => {
+const RouteListCard = ({ stops, currentStopLocationId, onStopSelect }: RouteListCardProps) => {
   return (
     <Card className="h-full">
       <CardContent className="space-y-4 p-4">
@@ -24,7 +25,13 @@ const RouteListCard = ({ stops, currentStopLocationId }: RouteListCardProps) => 
             const isExtraPickup = stop.is_extra_pickup;
 
             return (
-              <div key={stop.location_id} className="border-b pb-2 last:border-b-0">
+              <div 
+                key={stop.location_id} 
+                className={`border-b pb-2 last:border-b-0 cursor-pointer hover:bg-gray-50 p-2 rounded transition-colors ${
+                  isCurrent ? "bg-green-50" : ""
+                }`}
+                onClick={() => onStopSelect?.(stop.location_id)}
+              >
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className={`font-semibold ${isCurrent ? "text-green-700" : ""}`}>

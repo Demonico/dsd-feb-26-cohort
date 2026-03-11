@@ -3,31 +3,102 @@ import { MapPin } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import http from "@/api/http";
 import type { Stop } from "@/types/driver";
 
 type StopCardProps = {
   stop: Stop;
+  onComplete?: (updatedStop: Stop) => void;
 };
 
-const StopCard = ({ stop }: StopCardProps) => {
+const StopCard = ({ stop, onComplete }: StopCardProps) => {
   const [statusAction, setStatusAction] = useState<"COMPLETED" | "FAILED" | null>(
     null,
   );
   const [reason, setReason] = useState<string>("");
   const [proofFile, setProofFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const isSubmitDisabled =
     !statusAction || (statusAction === "FAILED" && reason.length === 0);
 
   const handleSubmit = async () => {
     if (isSubmitDisabled) return;
-    // TODO: Call driver stop update API when backend contract is confirmed.
-    console.log("Stop submit payload", {
-      location_id: stop.location_id,
-      status: statusAction,
-      failure_reason: statusAction === "FAILED" ? reason : null,
-      proof_of_service_photo: proofFile?.name ?? null,
-    });
+    
+    setUploading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      // Update job status and failure reason
+      const updatePayload: any = {
+        status: statusAction,
+        completed_at: new Date().toISOString(),
+      };
+      
+      // Only include failure_reason if status is FAILED and reason is selected
+      if (statusAction === "FAILED" && reason) {
+        updatePayload.failure_reason = reason;
+      }
+      
+      await http.patch(`/service-jobs/${stop.job_id}/metadata`, updatePayload);
+
+      // Upload proof image if provided (only for FAILED status)
+      if (proofFile && statusAction === "FAILED") {
+        if (!stop.job_id) {
+          throw new Error("Job ID is missing");
+        }
+        
+        const formData = new FormData();
+        formData.append("file", proofFile);
+        formData.append("job_id", stop.job_id.toString());
+
+        const response = await http.post("/uploads/image", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+      }
+
+      // Call onComplete with updated stop data
+      if (onComplete) {
+        const updatedStop: Stop = {
+          ...stop,
+          status: statusAction,
+          failure_reason: statusAction === "FAILED" ? reason : null,
+        };
+        onComplete(updatedStop);
+      }
+
+      setSuccess(true);
+      setTimeout(() => {
+        setStatusAction(null);
+        setReason("");
+        setProofFile(null);
+        setSuccess(false);
+      }, 1000);
+    } catch (err: any) {
+      let errorMsg = "Failed to upload proof";
+      
+      if (err.response?.data?.detail) {
+        // Handle array of validation errors
+        if (Array.isArray(err.response.data.detail)) {
+          errorMsg = err.response.data.detail.map((e: any) => 
+            `${e.loc?.join('.') || 'field'}: ${e.msg}`
+          ).join(', ');
+        } else if (typeof err.response.data.detail === 'string') {
+          errorMsg = err.response.data.detail;
+        } else {
+          errorMsg = JSON.stringify(err.response.data.detail);
+        }
+      } else if (err.message) {
+        errorMsg = err.message;
+      }
+      
+      setError(errorMsg);
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -46,9 +117,6 @@ const StopCard = ({ stop }: StopCardProps) => {
         <div className="grid grid-cols-1 gap-2 text-sm font-semibold sm:grid-cols-2">
           <p>
             Service: <span className="font-bold">{stop.service}</span>
-          </p>
-          <p>
-            Container: <span className="font-bold">{stop.container}</span>
           </p>
         </div>
 
@@ -79,38 +147,53 @@ const StopCard = ({ stop }: StopCardProps) => {
           </Button>
         </div>
 
-        <div className="space-y-2">
-          <Select
-            value={reason}
-            onValueChange={setReason}
-            disabled={statusAction !== "FAILED"}
-          >
-            <SelectTrigger className="w-full cursor-pointer">
-              <SelectValue placeholder="Reason for not serving" />
-            </SelectTrigger>
-            <SelectContent position="popper" sideOffset={6} align="start">
-              <SelectItem className="cursor-pointer" value="blocked_access">Blocked access</SelectItem>
-              <SelectItem className="cursor-pointer" value="contaminated_bin">Contaminated bin</SelectItem>
-              <SelectItem className="cursor-pointer" value="bin_not_out">Bin not out</SelectItem>
-              <SelectItem className="cursor-pointer" value="safety_issue">Safety issue</SelectItem>
-            </SelectContent>
-          </Select>
+        {statusAction === "FAILED" && (
+          <div className="space-y-2">
+            <Select
+              value={reason}
+              onValueChange={setReason}
+            >
+              <SelectTrigger className="w-full cursor-pointer">
+                <SelectValue placeholder="Reason for not serving" />
+              </SelectTrigger>
+              <SelectContent position="popper" sideOffset={6} align="start">
+                <SelectItem className="cursor-pointer" value="IMPROPER_PLACEMENT">Improper Placement of Garbage</SelectItem>
+                <SelectItem className="cursor-pointer" value="CONTAMINATED_BIN">Contaminated Bin</SelectItem>
+                <SelectItem className="cursor-pointer" value="BIN_NOT_OUT">Bin Not Out</SelectItem>
+                <SelectItem className="cursor-pointer" value="SAFETY_ISSUE">Safety Issue</SelectItem>
+              </SelectContent>
+            </Select>
 
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
-            className="w-full text-sm file:mr-4 file:cursor-pointer file:rounded-md file:border file:bg-gray-100 file:px-3 file:py-1 file:text-sm"
-          />
-        </div>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={(e) => setProofFile(e.target.files?.[0] ?? null)}
+              className="w-full text-sm file:mr-4 file:cursor-pointer file:rounded-md file:border file:bg-gray-100 file:px-3 file:py-1 file:text-sm"
+            />
+          </div>
+        )}
+
+        {error && (
+          <div className="p-2 bg-red-50 text-red-700 text-sm rounded">
+            {error}
+          </div>
+        )}
+        
+        {success && (
+          <div className="p-2 bg-green-50 text-green-700 text-sm rounded">
+            {statusAction === "FAILED" && proofFile 
+              ? "Proof uploaded successfully!" 
+              : "Stop completed successfully!"}
+          </div>
+        )}
 
         <Button
           type="button"
           onClick={handleSubmit}
-          disabled={isSubmitDisabled}
+          disabled={isSubmitDisabled || uploading}
           className="w-full cursor-pointer rounded-lg bg-black font-bold text-white disabled:cursor-not-allowed disabled:opacity-70"
         >
-          SUBMIT
+          {uploading ? "SUBMITTING..." : "SUBMIT"}
         </Button>
       </CardContent>
     </Card>
