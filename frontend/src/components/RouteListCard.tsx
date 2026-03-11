@@ -23,6 +23,7 @@ const RouteListCard = ({ stops, currentStopLocationId, onStopSelect }: RouteList
           {stops.map((stop, index) => {
             const isCurrent = stop.location_id === currentStopLocationId;
             const isExtraPickup = stop.is_extra_pickup;
+            const isSkipped = stop.status === "SKIPPED";
 
             return (
               <div 
@@ -41,11 +42,18 @@ const RouteListCard = ({ stops, currentStopLocationId, onStopSelect }: RouteList
                       {stop.city}, {stop.state} {stop.zip}
                     </p>
                   </div>
-                  {isExtraPickup ? (
-                    <span className="inline-flex whitespace-nowrap rounded-full border border-red-500 px-2 py-0.5 text-xs font-semibold text-red-600">
-                      Extra Pickup
-                    </span>
-                  ) : null}
+                  <div className="flex gap-2">
+                    {isSkipped && (
+                      <span className="inline-flex whitespace-nowrap rounded-full bg-red-500 px-2 py-0.5 text-xs font-semibold text-white">
+                        Skipped
+                      </span>
+                    )}
+                    {isExtraPickup && (
+                      <span className="inline-flex whitespace-nowrap rounded-full border border-red-500 px-2 py-0.5 text-xs font-semibold text-red-600">
+                        Extra Pickup
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             );

@@ -86,8 +86,8 @@ const DriverDashboard = () => {
   );
 
   const routeHealth = useMemo(() => {
-    const completed = stops.filter(s => s.status === "COMPLETED").length;
-    const skipped = stops.filter(s => s.status === "FAILED" || s.status === "SKIPPED").length;
+    const completed = stops.filter(s => s.status === "COMPLETED" || s.status === "FAILED").length;
+    const skipped = stops.filter(s => s.status === "SKIPPED").length;
     const pending = stops.filter(s => s.status === "PENDING").length;
     
     return {
@@ -103,8 +103,12 @@ const DriverDashboard = () => {
       prevStops.map(s => s.job_id === updatedStop.job_id ? updatedStop : s)
     );
     
-    // Move to next pending stop or next stop in sequence
-    const nextIndex = currentStopIndex + 1;
+    // Find next non-skipped stop
+    let nextIndex = currentStopIndex + 1;
+    while (nextIndex < stops.length && stops[nextIndex].status === "SKIPPED") {
+      nextIndex++;
+    }
+    
     if (nextIndex < stops.length) {
       setCurrentStopIndex(nextIndex);
     }

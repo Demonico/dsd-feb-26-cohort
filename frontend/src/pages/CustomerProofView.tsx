@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import http from "../api/http";
 
 const formatFailureReason = (reason: string): string => {
@@ -17,6 +19,7 @@ const CustomerProofView = () => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [failureReason, setFailureReason] = useState<string | null>(null);
   const [jobStatus, setJobStatus] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchProof = async () => {
@@ -62,6 +65,14 @@ const CustomerProofView = () => {
 
   return (
     <div className="max-w-2xl mx-auto p-6">
+      <button
+        onClick={() => navigate("/customer")}
+        className="flex items-center gap-2 mb-4 text-gray-600 hover:text-gray-900 transition-colors"
+      >
+        <ArrowLeft size={20} />
+        <span>Back to Dashboard</span>
+      </button>
+      
       <h1 className="text-3xl font-bold mb-6">Proof of Service</h1>
 
       <div className="bg-white rounded-lg shadow p-6">
@@ -74,7 +85,7 @@ const CustomerProofView = () => {
         {imageUrl && (
           <div>
             {jobStatus && (
-              <div className="mb-4 p-3 bg-blue-50 text-blue-800 rounded">
+              <div className="mb-4 p-3 bg-red-50 text-red-800 rounded">
                 <p className="font-semibold text-sm">Status: {jobStatus}</p>
               </div>
             )}
