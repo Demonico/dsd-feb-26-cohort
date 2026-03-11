@@ -97,40 +97,66 @@ const Sidebar = ({ items, user, onLogout, expand, setExpand }: SidebarProps) => 
           })}
         </ul>
 
-        <div
-          className={`border-t flex p-2 items-center overflow-hidden ${
-            isMobile ? "flex-col gap-2" : "justify-between"
-          }`}
-        >
-          <button
-            type="button"
-            className={`flex items-center gap-2 overflow-hidden rounded-xl p-1 ${isMobile ? "hover:bg-gray-200" : ""} ${expand ? "w-full" : "justify-center w-full"}`}
-            onClick={() => isMobile && setShowProfileModal((prev) => !prev)}
-            aria-haspopup={isMobile ? "dialog" : undefined}
-            aria-expanded={isMobile ? showProfileModal : undefined}
-            title="Profile"
-          >
-            <CircleUser size={33} />
-            <div
-              className={`overflow-hidden transition-all ${expand ? "w-30 ml-1" : "w-0"}`}
-            >
-              <h2 className="font-semibold truncate">
-                {user?.email?.split("@")[0] ?? "Guest"}
-              </h2>
-              <p className="text-xs truncate">{user?.role ?? "—"}</p>
-            </div>
-          </button>
+        <div className="border-t flex p-2 items-center overflow-hidden">
+          {isMobile ? (
+            <div className="flex flex-col gap-2 items-stretch w-full">
+              <button
+                type="button"
+                className={`flex items-center gap-2 overflow-hidden rounded-xl p-1 cursor-pointer hover:bg-gray-200 ${
+                  expand ? "w-full" : "justify-center w-full"
+                }`}
+                onClick={() => setShowProfileModal((prev) => !prev)}
+                aria-haspopup="dialog"
+                aria-expanded={showProfileModal}
+                title="Profile"
+              >
+                <CircleUser size={33} />
+                <div
+                  className={`overflow-hidden transition-all ${
+                    expand ? "w-30 ml-1" : "w-0"
+                  }`}
+                >
+                  <h2 className="font-semibold truncate">
+                    {user?.email?.split("@")[0] ?? "Guest"}
+                  </h2>
+                  <p className="text-xs truncate">{user?.role ?? "—"}</p>
+                </div>
+              </button>
 
-          <button
-            type="button"
-            onClick={onLogout}
-            className={`cursor-pointer hover:bg-gray-300 rounded-xl p-1 shrink-0 ${
-              isMobile ? "" : "ml-auto"
-            }`}
-            title="Logout"
-          >
-            <LogOut size={24} />
-          </button>
+              <button
+                type="button"
+                onClick={onLogout}
+                className="cursor-pointer hover:bg-gray-300 rounded-xl p-1 shrink-0 w-full flex justify-center"
+                title="Logout"
+              >
+                <LogOut size={24} />
+              </button>
+            </div>
+          ) : (
+            <>
+              <div className="flex items-center gap-2 overflow-hidden">
+                <CircleUser size={33} />
+                <div
+                  className={`overflow-hidden transition-all ${
+                    expand ? "w-30 ml-1" : "w-0"
+                  }`}
+                >
+                  <h2 className="font-semibold truncate">
+                    {user?.email?.split("@")[0] ?? "Guest"}
+                  </h2>
+                  <p className="text-xs truncate">{user?.role ?? "—"}</p>
+                </div>
+              </div>
+              <button
+                type="button"
+                onClick={onLogout}
+                className="cursor-pointer hover:bg-gray-300 rounded-xl p-1 shrink-0 ml-auto"
+                title="Logout"
+              >
+                <LogOut size={24} />
+              </button>
+            </>
+          )}
         </div>
       </nav>
 
