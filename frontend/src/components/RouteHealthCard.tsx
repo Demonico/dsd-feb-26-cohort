@@ -2,11 +2,11 @@ import { Activity } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RouteHealth } from "@/types/driver";
 
-type RouteHealtCardProps = {
+type RouteHealthCardProps = {
   health: RouteHealth;
 };
 
-const RouteHealtCard = ({ health }: RouteHealtCardProps) => {
+const RouteHealthCard = ({ health }: RouteHealthCardProps) => {
   return (
     <Card>
       <CardContent className="space-y-4 p-4">
@@ -38,4 +38,4 @@ const RouteHealtCard = ({ health }: RouteHealtCardProps) => {
   )
 }
 
-export default RouteHealtCard;
+export default RouteHealthCard;

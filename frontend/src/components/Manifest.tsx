@@ -32,7 +32,6 @@
                             <th className="p-3 text-left">Location</th>
                             <th className="p-3 text-left">Customer</th>
                             <th className="p-3 text-left">Service</th>
-                            <th className="p-3 text-left">Container</th>
                             <th className="p-3 text-left">Size</th>
                             <th className="p-3 text-left">Status</th>
                         </tr>
@@ -40,7 +39,7 @@
                     <tbody>
                         {currItems.length === 0 ? (
                             <tr>
-                                <td colSpan={7} className="p-4 text-center text-muted-foreground">
+                                <td colSpan={6} className="p-4 text-center text-muted-foreground">
                                     No jobs assigned.
                                 </td>
                             </tr>
@@ -51,7 +50,6 @@
                                 <td className="p-2">{row.address?.street_address ?? "N/A"}</td>
                                 <td className="p-2">{row.customer_name ?? "N/A"}</td>
                                 <td className="p-2">{row.job_source}</td>
-                                <td className="p-2">Mixed</td>
                                 <td className="p-2">N/A</td>
                                 <td className="p-2">
                                     <span className={`inline-flex justify-center items-center w-24 px-2 py-1 rounded-xl font-medium ${row.status === "COMPLETED"
@@ -103,4 +101,3 @@
     }
 
     export default Manifest;
-

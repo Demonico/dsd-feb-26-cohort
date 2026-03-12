@@ -14,7 +14,6 @@ export const mockCustomer: Customer = {
   serviceJob: {
     status: "pending",
     service: "Scheduled",
-    container: "6yd",
     stopOrder: 1,
     scheduledPickup: "Friday, Feb 13th",
     requestFormOpen: true,

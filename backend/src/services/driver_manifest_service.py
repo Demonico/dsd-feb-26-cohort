@@ -36,6 +36,7 @@ def _get_route_for_day(driver_id: int, service_date: date) -> dict | None:
         .select("*")
         .eq("driver_id", driver_id)
         .eq("service_date", service_date.isoformat())
+        .order("route_id", desc=True)  # ← Get latest
         .limit(1)
         .execute()
     )
@@ -210,8 +211,8 @@ def _optimized_location_order(route: dict, locations: list[dict]) -> list[int]:
         return default_order
 
     steps = (((optimized.get("routes") or [{}])[0]).get("steps") or [])
-    # distance_service currently assigns destination ids from 2..N.
-    job_id_to_location_id = {index + 2: loc_id for index, loc_id in enumerate(location_ids)}
+    # optimize_distance assigns job ids starting from 1.
+    job_id_to_location_id = {i: loc_id for i, loc_id in enumerate(location_ids, start=1)}
 
     ordered: list[int] = []
     for step in steps:
@@ -425,3 +426,21 @@ def generate_driver_route_for_date(user_id: str, service_date: date) -> dict:
 
     _client().table("service_jobs").insert(payload).execute()
     return get_driver_manifest_for_date(user_id, service_date)
+
+
+def get_jobs_for_date(user_id: str, service_date: date) -> dict:
+    driver = _get_driver_by_user_id(user_id)
+    route = _get_route_for_day(driver["driver_id"], service_date)
+    if route is None:
+        return {"service_date": service_date.isoformat(), "driver": driver, "jobs": []}
+
+    jobs = _get_jobs_by_route(route["route_id"])
+    enriched = _build_enriched_jobs(jobs)
+    # Sort by sequence_order, no optimization call
+    enriched.sort(key=lambda j: (j.get("sequence_order") is None, j.get("sequence_order") or 0))
+    return {
+        "service_date": service_date.isoformat(),
+        "driver": driver,
+        "route": route,
+        "jobs": enriched,
+    }

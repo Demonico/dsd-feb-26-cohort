@@ -4,12 +4,13 @@ import RouteDetails from "../components/RouteDetails";
 import ManifestDetails from "@/components/ManifestDetails";
 import Manifest from "@/components/Manifest";
 import {
-  fetchDriverManifest,
+  fetchManifestJobs,
   type DriverManifestResponse,
 } from "@/api/driverManifest";
 
 function todayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
 }
 
 const DriverManifest = () => {
@@ -23,7 +24,8 @@ const DriverManifest = () => {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchDriverManifest(date);
+      const data = await fetchManifestJobs(date);
+      data.jobs.sort((a, b) => (a.sequence_order ?? 9999) - (b.sequence_order ?? 9999));
       setManifest(data);
     } catch (e) {
       const message = e instanceof Error ? e.message : "Failed to load manifest";

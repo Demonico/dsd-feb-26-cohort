@@ -150,3 +150,4 @@ const LocationCard = ({
 };
 
 export default LocationCard;
+
