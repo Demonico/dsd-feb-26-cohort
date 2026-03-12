@@ -7,6 +7,7 @@ from sqlmodel import SQLModel, Field
 
 
 class RequestType(str, Enum):
+    NORMAL = "NORMAL"
     SKIP = "SKIP"
     EXTRA = "EXTRA"
 

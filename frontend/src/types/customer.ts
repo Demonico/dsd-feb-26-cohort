@@ -75,7 +75,7 @@ export type UpdateCustomerServiceJobPayload = {
   proof_of_service_photo?: string | null;
 };
 
-export type CustomerRequestType = "SKIP" | "EXTRA";
+export type CustomerRequestType = "NORMAL" | "SKIP" | "EXTRA";
 
 export type CreateCustomerRequestPayload = {
   request_type: CustomerRequestType;

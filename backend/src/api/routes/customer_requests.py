@@ -13,21 +13,21 @@ router = APIRouter(
 class RequestBase(BaseModel):
     location_id: Optional[int] = None
     customer_id: Optional[int] = None
-    request_type: Literal["SKIP", "EXTRA"] | None = None
+    request_type: Literal["NORMAL", "SKIP", "EXTRA"] | None = None
     requested_for_date: Optional[date] = None
     status: Literal["PENDING", "COMPLETED", "FAILED", "SKIPPED"] | None = None
 
 class RequestCreate(RequestBase):
     location_id: int
     customer_id: int
-    request_type: Literal["SKIP", "EXTRA"]
+    request_type: Literal["NORMAL", "SKIP", "EXTRA"]
     requested_for_date: date
     status: Literal["PENDING", "COMPLETED", "FAILED", "SKIPPED"] = "PENDING"
     created_at: Optional[datetime] = None
 
 
 class CustomerRequestCreate(BaseModel):
-    request_type: Literal["SKIP", "EXTRA"]
+    request_type: Literal["NORMAL", "SKIP", "EXTRA"]
     requested_for_date: date
 
 

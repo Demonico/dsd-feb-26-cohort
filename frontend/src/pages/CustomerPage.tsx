@@ -167,6 +167,7 @@ function extractErrorMessage(error: unknown): string {
 function mapRequestType(
   serviceType: ServiceJob["serviceType"] | null,
 ): CustomerRequestType | null {
+  if (serviceType === "normal_pickup") return "NORMAL";
   if (serviceType === "extra_pickup") return "EXTRA";
   if (serviceType === "skip_pickup") return "SKIP";
   return null;
@@ -215,7 +216,7 @@ const CustomerPage = ({ user }: CustomerPageProps) => {
     try {
       const requestType = mapRequestType(selectedServiceType);
       if (!requestType) {
-        throw new Error("Only extra pickup and skip pickup requests can be submitted");
+        throw new Error("A service type must be selected before submitting");
       }
 
       if (!customer.serviceJob.serviceDate) {

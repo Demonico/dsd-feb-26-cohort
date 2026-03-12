@@ -46,10 +46,7 @@ const LocationCard = ({
 
   const canEdit = serviceJob.requestFormOpen && (!isSubmitted || editing);
 
-  const isSubmitEnabled =
-    canEdit &&
-    !!selectedServiceType &&
-    selectedServiceType !== "normal_pickup";
+  const isSubmitEnabled = canEdit && !!selectedServiceType;
 
   return (
     <Card>
