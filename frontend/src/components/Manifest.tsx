@@ -54,10 +54,10 @@ const Manifest = ({ jobs }: ManifestProps) => {
                     row.status === "COMPLETED"
                       ? "bg-green-100 text-green-600"
                       : row.status === "FAILED"
-                        ? "bg-red-500 text-white"
-                      : row.status === "SKIPPED"
-                        ? "bg-red-500 text-white"
-                        : "bg-gray-100 text-gray-600"
+                        ? "bg-red-100 text-red-600"
+                        : row.status === "SKIPPED"
+                          ? "bg-red-100 text-red-600"
+                          : "bg-gray-100 text-gray-600"
                   } p-1`}
                 >
                   {row.status}
