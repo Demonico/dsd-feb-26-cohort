@@ -1,14 +1,15 @@
 import { Card, CardContent } from "@/components/ui/card";
-import { Info, Image } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { TriangleAlert } from "lucide-react";
 import { useEffect, useState } from "react";
-import http from "../api/http";
+import { useNavigate } from "react-router-dom";
 
-type Job = {
-  job_id: number;
-  status: string;
-  completed_at: string | null;
-  proof_of_service_photo: string | null;
+type ServiceIssue = {
+  reason: string;
+  photoUrl?: string;
+};
+
+type ServiceIssuesCardProps = {
+  issues: ServiceIssue[];
 };
 
 const ServiceIssuesCard = () => {
@@ -36,30 +37,35 @@ const ServiceIssuesCard = () => {
 
   return (
     <Card className="flex-1">
-      <CardContent className="p-4 flex flex-col gap-2">
+      <CardContent className="p-4 flex flex-col gap-3">
         <div className="flex items-center gap-2">
-          <Info size={20} className="text-green-700" />
+          <TriangleAlert size={20} className="text-green-700" />
           <p className="font-bold">Service Issues</p>
         </div>
-        {jobs.length === 0 ? (
-          <p className="text-sm text-gray-400 text-center py-4">No Proofs Available</p>
+
+        {issues.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center py-4">
+            No Issues Reported
+          </p>
         ) : (
-          jobs.map((job) => (
+          issues.map((issue, i) => (
             <div
-              key={job.job_id}
-              onClick={() => navigate(`/proof?job=${job.job_id}`)}
-              className="flex items-center justify-between p-2 hover:bg-gray-100 rounded cursor-pointer"
+              key={i}
+              className="p-3 flex flex-col gap-2"
             >
               <div className="flex items-center gap-2">
-                <Image size={16} className="text-green-700" />
-                <p className="text-sm">
-                  Job #{job.job_id} - {job.status}
+                <span className="w-3 h-3 rounded-full bg-red-500" />
+                <p className="text-sm font-semibold text-red-600">
+                  {issue.reason}
                 </p>
               </div>
-              {formatCompletedAt(job.completed_at) && (
-                <p className="text-xs text-gray-500">
-                  {formatCompletedAt(job.completed_at)}
-                </p>
+
+              {issue.photoUrl && (
+                <img
+                  src={issue.photoUrl}
+                  alt="Driver proof"
+                  className="max-h-48 object-cover"
+                />
               )}
             </div>
           ))
@@ -68,5 +74,6 @@ const ServiceIssuesCard = () => {
     </Card>
   );
 };
+
 
 export default ServiceIssuesCard;

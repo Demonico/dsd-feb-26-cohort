@@ -34,21 +34,19 @@ const Sidebar = ({ items, user, onLogout, expand, setExpand }: SidebarProps) => 
     >
       <nav className="h-full flex flex-col gap-15 ">
         <div className="p-3 pb-2 flex items-center justify-between">
-          <img
-            src={logo}
-            alt="logo"
-            className={`overflow-hidden transition-all ${expand ? "w-15" : "w-0"}`}
-          ></img>
-          <span></span>
+          <div className="flex items-center">
+            <img src={logo} alt="logo" className="w-10 h-10 shrink-0" />
+
+            {expand && (
+              <h1 className="ml-2 text-md font-bold text-[#005B17]">RECYKLE</h1>
+            )}
+          </div>
+
           <button
             onClick={() => setExpand(!expand)}
-            className="p-1.5 rounded-lg ml-3 cursor-pointer hover:bg-gray-200"
+            className="p-1.5 rounded-lg cursor-pointer shrink-0"
           >
-            {expand ? (
-              <ChevronFirst size={25} className="text-black-500" />
-            ) : (
-              <ChevronLast size={25} className="text-black-500" />
-            )}
+            {expand ? <ChevronFirst size={22} /> : <ChevronLast size={22} />}
           </button>
         </div>
 
@@ -64,22 +62,22 @@ const Sidebar = ({ items, user, onLogout, expand, setExpand }: SidebarProps) => 
                   className={`relative flex items-center gap-2 p-3 hover:bg-gray-100 hover:text-green-600 rounded-md cursor-pointer group ${location.pathname === item.path ? "bg-green-100 text-green-600":"hover:bg-gray-100 hover:text-green-600"}`}
                 
                 >
-                  <Icon size={30} />
+                  <Icon size={20} />
                   <span
-                    className={`font-bold whitespace-nowrap overflow-hidden transition-all ${
+                    className={`font-semibold whitespace-nowrap overflow-hidden transition-all ${
                       expand ? "w-30 ml-3" : "w-0"
                     }`}
                   >
                     {item.label}
                   </span>
-                  {!expand && (
+                  {/* {!expand && (
                     <div
-                      className={`absolute left-full rounded-md px-2 py-1 ml-6 font-bold  text-green-500 text-sm invisible opacity-20 
+                      className={`absolute left-full rounded-md px-2 py-1 ml-6 font-medium  text-green-500 text-sm invisible opacity-20 
                 translate-x-3 transition-all group-hover:visible group-hover:opacity-100 group-hover:translate-x-0`}
                     >
                       {item.label}
                     </div>
-                  )}
+                  )} */}
                 </Link>
               </li>
             );
@@ -96,13 +94,14 @@ const Sidebar = ({ items, user, onLogout, expand, setExpand }: SidebarProps) => 
               <p className="text-xs">{user?.role ?? "—"}</p>
             </div>
           </div>
+
           <button
             type="button"
             onClick={onLogout}
             className="cursor-pointer hover:bg-gray-300 rounded-xl p-1"
             title="Logout"
           >
-            <LogOut size={24} />
+            <LogOut size={20} />
           </button>
         </div>
       </nav>

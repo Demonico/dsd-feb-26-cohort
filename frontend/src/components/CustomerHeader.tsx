@@ -8,8 +8,8 @@ const CustomerHeader = ({location}:CustomerHeaderProps) => {
   const date = new Date();
   return (
     <div className="flex justify-between items-center mb-6">
-      <span className="font-bold">{date.toDateString()}</span>
-      <span className="font-bold">{location}</span>
+      <span className="font-medium">{date.toDateString()}</span>
+      <span className="font-medium">{location}</span>
     </div>
   )
 }

@@ -22,13 +22,17 @@ export type CustomerLocation = {
   zip: string;
 };
 
+export type ServiceIssue = {
+  reason: string;
+  photoUrl?: string;
+};
 export type Customer = {
   id: string;
   name: string;
   role: string;
   location: CustomerLocation;
   serviceJob: ServiceJob;
-  serviceIssues: string[];
+  serviceIssues: ServiceIssue[];
   serviceHistory: ServiceHistoryEntry[];
 };
 
