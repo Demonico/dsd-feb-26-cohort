@@ -79,6 +79,28 @@ def create_request(data: dict):
     return response.data[0]
 
 
+def _get_pending_request_for_customer_date(
+    *,
+    customer_id: int,
+    location_id: int,
+    requested_for_date: date,
+):
+    response = (
+        _client()
+        .table(TABLE)
+        .select("*")
+        .eq("customer_id", customer_id)
+        .eq("location_id", location_id)
+        .eq("requested_for_date", requested_for_date.isoformat())
+        .eq("status", "PENDING")
+        .order("request_id", desc=True)
+        .limit(1)
+        .execute()
+    )
+    rows = response.data or []
+    return rows[0] if rows else None
+
+
 def create_request_for_customer_user(
     *,
     user_id: str,
@@ -86,6 +108,29 @@ def create_request_for_customer_user(
     requested_for_date: date,
 ) -> dict:
     customer_id, location_id = _get_customer_context_for_user(user_id)
+    existing_request = _get_pending_request_for_customer_date(
+        customer_id=customer_id,
+        location_id=location_id,
+        requested_for_date=requested_for_date,
+    )
+    if existing_request:
+        if existing_request.get("request_type") == request_type:
+            return existing_request
+
+        updated_request = update_request(
+            existing_request["request_id"],
+            {
+                "request_type": request_type,
+                "status": "PENDING",
+            },
+        )
+        if updated_request is None:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Failed to update existing customer request",
+            )
+        return updated_request
+
     return create_request(
         {
             "customer_id": customer_id,
