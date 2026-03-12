@@ -8,12 +8,10 @@ import { useState } from "react";
 type LocationCardProps = {
   location: CustomerLocation;
   serviceJob: ServiceJob;
-
 };
 
 const LocationCard = ({ location, serviceJob }: LocationCardProps) => {
   const [selectedServiceType, setSelectedServiceType] = useState<string | null>(serviceJob.serviceType ?? null);
-
 
   const handleSubmit = async () => {
     if (!selectedServiceType || !serviceJob.requestFormOpen) return;
@@ -48,7 +46,6 @@ const LocationCard = ({ location, serviceJob }: LocationCardProps) => {
 
         <p className="text-sm"><span className="font-semibold">Scheduled Pickup:</span> {serviceJob.scheduledPickup}</p>
         <div className="flex flex-col gap-2 mt-2">
-          <p className="text-sm"><span className="font-semibold">Container:</span> {serviceJob.container}</p>
           <p className="text-sm font-semibold">Service Type:</p>
 
           <Select

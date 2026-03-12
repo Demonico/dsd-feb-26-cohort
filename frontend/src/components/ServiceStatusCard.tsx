@@ -20,7 +20,6 @@ const ServiceStatusCard = ({serviceJob}:ServiceStatusCardProps) => {
           <span className="text-sm font-semibold">{serviceJob.status}</span>
         </div>
         <p className="text-sm"><span className="font-semibold">Service:</span> {serviceJob.service}</p>
-        <p className="text-sm"><span className="font-semibold">Container:</span> {serviceJob.container}</p>
         <p className="text-sm"><span className="font-semibold">Stop Order:</span> {serviceJob.stopOrder ?? "----"}</p>
        </CardContent>
     </Card>

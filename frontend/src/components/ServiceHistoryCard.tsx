@@ -14,25 +14,31 @@ const ServiceHistoryCard = ({ serviceHistory }: ServiceHistoryCardProps) => {
           <Clock size={20} className="text-green-700" />
           <p className="font-bold">Service History</p>
         </div>
-        <table className="w-full">
-          <thead>
-              <tr className="text-left font-semibold border-b">
-                <th className="pb-1 w-1/4">Date</th>
-                <th className="pb-1 w-1/4">Status</th>
-                <th className="pb-1 w-1/4">Notes</th>
-              </tr>
-          </thead>
-          <tbody>
-            {serviceHistory.map((item,i) => (
-              <tr key={i} className="border-b last:border-b-0">
-                <td className="py-1 w-1/4">{item.date}</td>
-                <td className="py-1 w-1/4">{item.status}</td>
-             <td className="py-1 w-1/4">{item.notes || "-----------"}</td>
+        {serviceHistory.length === 0 ? (
+          <p className="text-sm text-gray-400 text-center py-4">
+            No service history yet
+          </p>
+        ) : (
+          <table className="w-full">
+            <thead>
+                <tr className="text-left font-semibold border-b">
+                  <th className="pb-1 w-1/4">Date</th>
+                  <th className="pb-1 w-1/4">Status</th>
+                  <th className="pb-1 w-1/4">Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+              {serviceHistory.map((item,i) => (
+                <tr key={i} className="border-b last:border-b-0">
+                  <td className="py-1 w-1/4">{item.date}</td>
+                  <td className="py-1 w-1/4">{item.status}</td>
+               <td className="py-1 w-1/4">{item.notes || "-----------"}</td>
 
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
 
       </CardContent>
     </Card>

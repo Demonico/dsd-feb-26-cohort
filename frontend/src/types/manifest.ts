@@ -4,7 +4,6 @@ export type ManifestRow = {
   locationLine2: string;
   customer: string;
   service: string;
-  container: string;
   size: string;
   status: "Completed" | "Pending" | "Skipped" | "Extra";
 };

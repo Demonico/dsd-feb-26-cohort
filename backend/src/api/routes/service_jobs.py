@@ -4,7 +4,7 @@ from typing import Literal
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-from ..auth.dependencies import require_role
+from ..auth.dependencies import require_any_role, require_role
 from src.services.service_jobs_service import (
     list_service_jobs_for_customer_user,
     list_service_jobs_for_driver,
@@ -50,7 +50,7 @@ async def read_my_jobs(
 async def patch_service_job_metadata(
     job_id: int,
     payload: UpdateServiceJobMetadataPayload,
-    _user: dict = Depends(require_role("driver")),
+    _user: dict = Depends(require_any_role("driver", "customer")),
 ) -> dict:
     updates = payload.model_dump(exclude_none=True)
     updated_job = update_service_job_metadata(job_id=job_id, updates=updates)
