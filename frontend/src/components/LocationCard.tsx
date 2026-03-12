@@ -16,6 +16,8 @@ type LocationCardProps = {
   serviceJob: ServiceJob;
   selectedServiceType: ServiceJob["serviceType"] | null;
   setSelectedServiceType: (val: ServiceJob["serviceType"] | null) => void;
+  isSubmitted?: boolean;
+  onSubmittedChange?: (submitted: boolean) => void;
   onSubmit?: () => void;
 };
 
@@ -24,9 +26,10 @@ const LocationCard = ({
   serviceJob,
   selectedServiceType,
   setSelectedServiceType,
+  isSubmitted = false,
+  onSubmittedChange,
   onSubmit,
 }: LocationCardProps) => {
-  const [submitted, setSubmitted] = useState(false);
   const [editing, setEditing] = useState(false);
 
   const handleSubmit = async () => {
@@ -34,7 +37,7 @@ const LocationCard = ({
 
     try {
       console.log("Submitted:", { selectedServiceType });
-      setSubmitted(true);
+      onSubmittedChange?.(true);
       setEditing(false);
 
       if (onSubmit) onSubmit();
@@ -43,7 +46,7 @@ const LocationCard = ({
     }
   };
 
-  const canEdit = serviceJob.requestFormOpen && (!submitted || editing);
+  const canEdit = serviceJob.requestFormOpen && (!isSubmitted || editing);
 
   const isSubmitEnabled = canEdit && selectedServiceType;
 
@@ -62,12 +65,15 @@ const LocationCard = ({
               </p>
             </div>
           </div>
-          {submitted && serviceJob.requestFormOpen && !editing && (
+          {isSubmitted && serviceJob.requestFormOpen && !editing && (
             <Button
               size="sm"
               variant="outline"
               className="text-gray-500 border-gray-400"
-              onClick={() => setEditing(true)}
+              onClick={() => {
+                setEditing(true);
+                onSubmittedChange?.(false);
+              }}
             >
               Edit
             </Button>
@@ -93,10 +99,13 @@ const LocationCard = ({
         </div>
 
         {/* Scheduled Pickup */}
-        <p className="text-sm">
-          <span className="font-semibold">Scheduled Pickup:</span>
-          {serviceJob.scheduledPickup}
-        </p>
+        {serviceJob.scheduledPickup &&
+        serviceJob.scheduledPickup !== "Not provided by API" ? (
+          <p className="text-sm">
+            <span className="font-semibold">Scheduled Pickup:</span>{" "}
+            {serviceJob.scheduledPickup}
+          </p>
+        ) : null}
 
         {/*Service Type */}
         <div className="flex flex-col mt-2 mb-4 gap-4">
@@ -150,4 +159,3 @@ const LocationCard = ({
 };
 
 export default LocationCard;
-

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import RouteDetails from "../components/RouteDetails";
 import ManifestDetails from "@/components/ManifestDetails";
@@ -18,6 +18,7 @@ const DriverManifest = () => {
   const [manifest, setManifest] = useState<DriverManifestResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
   const lastLoadedDateRef = useRef<string | null>(null);
 
   async function loadManifest(date: string) {
@@ -44,6 +45,16 @@ const DriverManifest = () => {
   }, [serviceDate]);
 
   const jobs = manifest?.jobs ?? [];
+  const filteredJobs = useMemo(() => {
+    const query = searchQuery.trim().toLowerCase();
+    if (!query) return jobs;
+
+    return jobs.filter((job) => {
+      const address = job.address?.street_address?.toLowerCase() ?? "";
+      const customerName = job.customer_name?.toLowerCase() ?? "";
+      return address.includes(query) || customerName.includes(query);
+    });
+  }, [jobs, searchQuery]);
   const skips = manifest?.skip_count ?? 0;
   const extras = manifest?.extra_count ?? 0;
 
@@ -73,8 +84,14 @@ const DriverManifest = () => {
         serviceDate={serviceDate}
       />
       <div className="border-2 p-4 rounded-sm">
-        <ManifestDetails stops={jobs.length} skips={skips} extras={extras} />
-        <Manifest jobs={jobs} />
+        <ManifestDetails
+          stops={filteredJobs.length}
+          skips={skips}
+          extras={extras}
+          searchQuery={searchQuery}
+          onSearchQueryChange={setSearchQuery}
+        />
+        <Manifest jobs={filteredJobs} />
       </div>
     </div>
   );

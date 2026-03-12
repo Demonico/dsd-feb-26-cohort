@@ -65,8 +65,9 @@ const ServiceStatusCard = ({
     dotColor = "bg-yellow-400";
     stopOrder = serviceJob.stopOrder ?? "----";
   } else {
-    label = "Pending";
+    label = "Request Submitted";
     dotColor = "bg-yellow-400";
+    stopOrder = serviceJob.stopOrder ?? "----";
   }
   return (
     <Card className="flex-none">
@@ -100,4 +101,3 @@ const ServiceStatusCard = ({
 };
 
 export default ServiceStatusCard;
-

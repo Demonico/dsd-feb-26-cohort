@@ -17,6 +17,7 @@ function buildRoute(manifest: DriverManifestResponse): Route | null {
   const stops: Stop[] = [...manifest.jobs]
     .sort((a, b) => (a.sequence_order ?? 9999) - (b.sequence_order ?? 9999))
     .map((job) => ({
+      job_id: job.job_id,
       location_id: job.location_id,
       sequence_order: job.sequence_order ?? 0,
       customer_name: job.customer_name ?? "Unknown",
@@ -51,9 +52,8 @@ const DriverDashboard = () => {
   const [route, setRoute] = useState<Route | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const loadedRef = useRef(false);  // ← add this
-  const [currentStopIndex, setCurrentStopIndex] = useState(0);
-  const [stops, setStops] = useState<Stop[]>([]);
+  const loadedRef = useRef(false);
+  const [selectedStopLocationId, setSelectedStopLocationId] = useState<number | null>(null);
 
   useEffect(() => {
     if (loadedRef.current) return;
@@ -77,7 +77,7 @@ const DriverDashboard = () => {
           .map((s) => s.location_id as number);
 
         const built = buildRoute(manifest);
-        if (built && orderedLocationIds.length > 0) {
+      if (built && orderedLocationIds.length > 0) {
           const indexMap = new Map(orderedLocationIds.map((id, i) => [id, i]));
           built.stops.sort(
             (a, b) => (indexMap.get(a.location_id) ?? 9999) - (indexMap.get(b.location_id) ?? 9999)
@@ -97,13 +97,62 @@ const DriverDashboard = () => {
   }, []);
 
   const currentStop = useMemo(
-    () => route?.stops.find((s) => s.status === "PENDING") ?? route?.stops[0] ?? null,
-    [route],
+    () =>
+      route?.stops.find((s) => s.location_id === selectedStopLocationId) ??
+      route?.stops.find((s) => s.status === "PENDING") ??
+      route?.stops[0] ??
+      null,
+    [route, selectedStopLocationId],
   );
+
+  const routeHealth = route
+    ? {
+        stops_remaining: route.stops.filter((s) => s.status === "PENDING").length,
+        completed: route.stops.filter((s) => s.status === "COMPLETED").length,
+        skipped: route.stops.filter((s) => s.status === "SKIPPED").length,
+        extra_pickups: route.stops.filter((s) => s.is_extra_pickup).length,
+      }
+    : null;
+
+  const handleStopComplete = (updatedStop: Stop) => {
+    setRoute((currentRoute) => {
+      if (!currentRoute) return currentRoute;
+
+      const updatedStops = currentRoute.stops.map((stop) =>
+        stop.job_id === updatedStop.job_id ? updatedStop : stop
+      );
+      const currentIndex = updatedStops.findIndex(
+        (stop) => stop.job_id === updatedStop.job_id
+      );
+      let nextIndex = currentIndex + 1;
+
+      while (
+        nextIndex < updatedStops.length &&
+        updatedStops[nextIndex].status === "SKIPPED"
+      ) {
+        nextIndex++;
+      }
+
+      setSelectedStopLocationId(
+        nextIndex < updatedStops.length
+          ? updatedStops[nextIndex].location_id
+          : null
+      );
+
+      return {
+        ...currentRoute,
+        stops: updatedStops,
+      };
+    });
+  };
+
+  const handleStopSelect = (locationId: number) => {
+    setSelectedStopLocationId(locationId);
+  };
 
   if (loading) return <div className="p-6">Loading...</div>;
   if (error) return <div className="p-6 text-red-600">{error}</div>;
-  if (!route || !currentStop) return <div className="p-6">No route for today.</div>;
+  if (!route || !currentStop || !routeHealth) return <div className="p-6">No route for today.</div>;
 
   return (
     <div className="p-6">
@@ -117,7 +166,7 @@ const DriverDashboard = () => {
           <RouteHealthCard health={routeHealth} />
         </div>
         <RouteListCard
-          stops={stops}
+          stops={route.stops}
           currentStopLocationId={currentStop.location_id}
           onStopSelect={handleStopSelect}
         />

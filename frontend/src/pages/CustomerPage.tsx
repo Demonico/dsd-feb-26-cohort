@@ -102,7 +102,7 @@ function buildCustomerViewModel(jobs: CustomerServiceJobApi[]): Customer {
     serviceJob: buildCurrentServiceJob(currentJob),
     serviceIssues: jobs
       .filter((job) => job.status === "FAILED" && job.failure_reason)
-      .map((job) => job.failure_reason as string),
+      .map((job) => ({ reason: job.failure_reason as string })),
     serviceHistory: buildServiceHistory(jobs),
   };
 }
@@ -128,6 +128,8 @@ const CustomerPage = () => {
   const [jobs, setJobs] = useState<CustomerServiceJobApi[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedServiceType, setSelectedServiceType] = useState<ServiceJob["serviceType"] | null>(null);
+  const [isRequestSubmitted, setIsRequestSubmitted] = useState(false);
 
   useEffect(() => {
     async function loadCustomerJobs() {
@@ -152,6 +154,14 @@ const CustomerPage = () => {
     [jobs],
   );
 
+  useEffect(() => {
+    setSelectedServiceType(customer.serviceJob.serviceType);
+  }, [customer.serviceJob.serviceType]);
+
+  useEffect(() => {
+    setIsRequestSubmitted(false);
+  }, [customer.serviceJob.jobId]);
+
   if (loading) {
     return <div className="p-6">Loading customer service jobs...</div>;
   }
@@ -169,11 +179,18 @@ const CustomerPage = () => {
           <LocationCard
             location={customer.location}
             serviceJob={customer.serviceJob}
+            selectedServiceType={selectedServiceType}
+            setSelectedServiceType={setSelectedServiceType}
+            isSubmitted={isRequestSubmitted}
+            onSubmittedChange={setIsRequestSubmitted}
           />
           <ServiceHistoryCard serviceHistory={customer.serviceHistory} />
         </div>
         <div className="flex flex-col gap-4">
-          <ServiceStatusCard serviceJob={customer.serviceJob} />
+          <ServiceStatusCard
+            serviceJob={customer.serviceJob}
+            isSubmitted={isRequestSubmitted}
+          />
           <ServiceIssuesCard />
         </div>
       </div>

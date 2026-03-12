@@ -8,8 +8,8 @@ type ServiceHistoryCardProps = {
 
 const ServiceHistoryCard = ({ serviceHistory }: ServiceHistoryCardProps) => {
   return (
-    <Card className="mt-2">
-      <CardContent>
+    <Card className="mt-2 max-h-72">
+      <CardContent className="h-full overflow-y-auto">
         <div className="flex items-center gap-2 mb-3">
           <Clock size={20} className="text-green-700" />
           <p className="font-bold">Service History</p>
