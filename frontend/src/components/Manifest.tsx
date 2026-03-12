@@ -1,4 +1,4 @@
-    import { useMemo, useState } from "react";
+    import { useEffect, useMemo, useState } from "react";
     import type { DriverManifestJob } from "@/api/driverManifest";
 
     type ManifestProps = {
@@ -9,6 +9,10 @@
 
         const [currentPage, setCurrentPage] = useState(1);
         const itemsInPage = 10;
+
+        useEffect(() => {
+            setCurrentPage(1);
+        }, [jobs]);
 
         const totalPages = Math.max(1, Math.ceil(jobs.length / itemsInPage));
         const currItems = useMemo(
