@@ -152,6 +152,13 @@ function formatLocationLabel(location: CustomerLocation): string {
   return parts.length > 0 ? parts.join(", ") : location.street;
 }
 
+function isToday(serviceDate?: string): boolean {
+  if (!serviceDate) return false;
+
+  const today = new Date().toISOString().slice(0, 10);
+  return serviceDate === today;
+}
+
 function extractErrorMessage(error: unknown): string {
   if (isAxiosError<{ detail?: string }>(error)) {
     return error.response?.data?.detail || error.message || "Request failed";
@@ -203,6 +210,9 @@ const CustomerPage = ({ user }: CustomerPageProps) => {
   }, []);
 
   const customer: Customer = useMemo(() => buildCustomerViewModel(jobs, user), [jobs, user]);
+  const isPickupDay =
+    customer.serviceJob.status === "pending" &&
+    isToday(customer.serviceJob.serviceDate);
 
   useEffect(() => {
     setSelectedServiceType(customer.serviceJob.serviceType);
@@ -266,6 +276,7 @@ const CustomerPage = ({ user }: CustomerPageProps) => {
           <ServiceStatusCard
             serviceJob={customer.serviceJob}
             isSubmitted={isRequestSubmitted}
+            isPickupDay={isPickupDay}
           />
           <ServiceIssuesCard issues={customer.serviceIssues} />
         </div>
