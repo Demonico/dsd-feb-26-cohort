@@ -12,6 +12,7 @@ import type {
   CustomerLocation,
   CustomerServiceJobApi,
   ServiceHistoryEntry,
+  ServiceIssue,
   ServiceJob,
 } from "@/types/customer";
 
@@ -102,7 +103,12 @@ function buildCustomerViewModel(jobs: CustomerServiceJobApi[]): Customer {
     serviceJob: buildCurrentServiceJob(currentJob),
     serviceIssues: jobs
       .filter((job) => job.status === "FAILED" && job.failure_reason)
-      .map((job) => job.failure_reason as string),
+      .map(
+        (job): ServiceIssue => ({
+          reason: job.failure_reason as string,
+          photoUrl: job.proof_of_service_photo ?? undefined,
+        }),
+      ),
     serviceHistory: buildServiceHistory(jobs),
   };
 }
@@ -128,6 +134,7 @@ const CustomerPage = () => {
   const [jobs, setJobs] = useState<CustomerServiceJobApi[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedServiceType, setSelectedServiceType] = useState<ServiceJob["serviceType"] | null>(null);
 
   useEffect(() => {
     async function loadCustomerJobs() {
@@ -152,6 +159,10 @@ const CustomerPage = () => {
     [jobs],
   );
 
+  useEffect(() => {
+    setSelectedServiceType(customer.serviceJob.serviceType);
+  }, [customer.serviceJob.serviceType]);
+
   if (loading) {
     return <div className="p-6">Loading customer service jobs...</div>;
   }
@@ -169,12 +180,14 @@ const CustomerPage = () => {
           <LocationCard
             location={customer.location}
             serviceJob={customer.serviceJob}
+            selectedServiceType={selectedServiceType}
+            setSelectedServiceType={setSelectedServiceType}
           />
           <ServiceHistoryCard serviceHistory={customer.serviceHistory} />
         </div>
         <div className="flex flex-col gap-4">
           <ServiceStatusCard serviceJob={customer.serviceJob} />
-          <ServiceIssuesCard />
+          <ServiceIssuesCard issues={customer.serviceIssues} />
         </div>
       </div>
     </div>

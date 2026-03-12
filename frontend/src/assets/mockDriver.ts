@@ -11,6 +11,7 @@ export const mockDriver: Driver = {
     state: "IL",
     stops: [
       {
+        job_id: 1001,
         location_id: 101,
         sequence_order: 1,
         customer_name: "Green Valley Apartments",
@@ -26,6 +27,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1002,
         location_id: 102,
         sequence_order: 2,
         customer_name: "Oakwood Pizza",
@@ -41,6 +43,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1003,
         location_id: 103,
         sequence_order: 3,
         customer_name: "Bryant Market",
@@ -56,6 +59,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1004,
         location_id: 104,
         sequence_order: 4,
         customer_name: "Birchwood Condos",
@@ -71,6 +75,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1005,
         location_id: 105,
         sequence_order: 5,
         customer_name: "Jefferson St Wine Bar",
@@ -86,6 +91,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1006,
         location_id: 106,
         sequence_order: 6,
         customer_name: "Mike's Pizza",
@@ -101,6 +107,7 @@ export const mockDriver: Driver = {
         proof_of_service_photo: null,
       },
       {
+        job_id: 1007,
         location_id: 107,
         sequence_order: 7,
         customer_name: "Lakeside Manor",

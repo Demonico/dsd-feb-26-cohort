@@ -1,40 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { TriangleAlert } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import type { ServiceIssue } from "@/types/customer";
 
-type ServiceIssue = {
-  reason: string;
-  photoUrl?: string;
-};
-
-type ServiceIssuesCardProps = {
+export type ServiceIssuesCardProps = {
   issues: ServiceIssue[];
 };
 
-const ServiceIssuesCard = () => {
-  const [jobs, setJobs] = useState<Job[]>([]);
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchJobs = async () => {
-      try {
-        const response = await http.get("/service-jobs/my-jobs");
-        setJobs(response.data.filter((job: Job) => job.proof_of_service_photo));
-      } catch (err) {
-        console.error("Failed to load jobs");
-      }
-    };
-    fetchJobs();
-  }, []);
-
-  const formatCompletedAt = (completed_at: string | null) => {
-    const completedAt = completed_at ? new Date(completed_at) : null;
-    return completedAt && !Number.isNaN(completedAt.getTime())
-      ? completedAt.toLocaleString("en-US", { timeZone: "America/Chicago" })
-      : null;
-  };
-
+const ServiceIssuesCard = ({ issues }: ServiceIssuesCardProps) => {
   return (
     <Card className="flex-1">
       <CardContent className="p-4 flex flex-col gap-3">
@@ -74,6 +46,5 @@ const ServiceIssuesCard = () => {
     </Card>
   );
 };
-
 
 export default ServiceIssuesCard;
