@@ -20,3 +20,8 @@ export async function patchCustomerServiceJobMetadata(
   );
   return response.data.service_job;
 }
+
+export async function fetchCustomerJobProof(jobId: number): Promise<string> {
+  const response = await http.get<{ url: string }>(`/uploads/job/${jobId}/proof`);
+  return response.data.url;
+}

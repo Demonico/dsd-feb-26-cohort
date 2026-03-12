@@ -55,12 +55,6 @@ const RouteDetails = ({ route, driverName, serviceDate }: RouteDetailsProps) => 
               </span>
               <span className="font-bold">{dateLabel}</span>
             </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-muted-foreground font-semibold text-lg">
-                Truck:
-              </span>
-              <span className="font-bold">Unassigned</span>
-            </div>
           </div>
 
           <div className="flex flex-col gap-2">
@@ -69,12 +63,6 @@ const RouteDetails = ({ route, driverName, serviceDate }: RouteDetailsProps) => 
                 Week Of:
               </span>
               <span className="font-bold">{route?.service_date ?? serviceDate}</span>
-            </div>
-            <div className="flex flex-col leading-none">
-              <span className="text-muted-foreground font-semibold text-lg">
-                Container Type:
-              </span>
-              <span className="font-bold">Mixed</span>
             </div>
           </div>
         </div>

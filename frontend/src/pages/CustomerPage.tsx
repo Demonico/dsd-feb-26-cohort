@@ -6,7 +6,10 @@ import LocationCard from "@/components/LocationCard";
 import ServiceStatusCard from "@/components/ServiceStatusCard";
 import ServiceHistoryCard from "@/components/ServiceHistoryCard";
 import ServiceIssuesCard from "@/components/ServiceIssuesCard";
-import { fetchCustomerServiceJobs } from "@/api/customerServiceJobs";
+import {
+  fetchCustomerJobProof,
+  fetchCustomerServiceJobs,
+} from "@/api/customerServiceJobs";
 import type {
   Customer,
   CustomerLocation,
@@ -105,6 +108,7 @@ function buildCustomerViewModel(jobs: CustomerServiceJobApi[]): Customer {
       .filter((job) => job.status === "FAILED" && job.failure_reason)
       .map(
         (job): ServiceIssue => ({
+          jobId: job.job_id,
           reason: job.failure_reason as string,
           photoUrl: job.proof_of_service_photo ?? undefined,
         }),
@@ -135,6 +139,7 @@ const CustomerPage = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedServiceType, setSelectedServiceType] = useState<ServiceJob["serviceType"] | null>(null);
+  const [serviceIssues, setServiceIssues] = useState<ServiceIssue[]>([]);
 
   useEffect(() => {
     async function loadCustomerJobs() {
@@ -163,6 +168,37 @@ const CustomerPage = () => {
     setSelectedServiceType(customer.serviceJob.serviceType);
   }, [customer.serviceJob.serviceType]);
 
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadIssueProofs() {
+      const resolvedIssues = await Promise.all(
+        customer.serviceIssues.map(async (issue) => {
+          if (!issue.jobId || !issue.photoUrl) {
+            return issue;
+          }
+
+          try {
+            const signedUrl = await fetchCustomerJobProof(issue.jobId);
+            return { ...issue, photoUrl: signedUrl };
+          } catch {
+            return issue;
+          }
+        }),
+      );
+
+      if (!cancelled) {
+        setServiceIssues(resolvedIssues);
+      }
+    }
+
+    void loadIssueProofs();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [customer.serviceIssues]);
+
   if (loading) {
     return <div className="p-6">Loading customer service jobs...</div>;
   }
@@ -187,7 +223,7 @@ const CustomerPage = () => {
         </div>
         <div className="flex flex-col gap-4">
           <ServiceStatusCard serviceJob={customer.serviceJob} />
-          <ServiceIssuesCard issues={customer.serviceIssues} />
+          <ServiceIssuesCard issues={serviceIssues} />
         </div>
       </div>
     </div>

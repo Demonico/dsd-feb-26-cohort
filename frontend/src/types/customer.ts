@@ -23,6 +23,7 @@ export type CustomerLocation = {
 };
 
 export type ServiceIssue = {
+  jobId?: number;
   reason: string;
   photoUrl?: string;
 };
